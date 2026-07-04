@@ -68,7 +68,7 @@ function LiveCounter({ count }: { count: number }) {
 // "colored text post" pattern (Twitter/Threads-style). When bgColor isn't
 // set (e.g. older posts created before this feature, or reposts of them),
 // it falls back to the original deterministic gradient so nothing breaks.
-function TextPost({ post, onLike, onComment, onShare, onSave, navigate }: any) {
+function TextPost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction }: any) {
   const gradients = [
     'from-[#1a0030] to-[#0d001a]',
     'from-[#001a30] to-[#00060d]',
@@ -199,7 +199,32 @@ function TextPost({ post, onLike, onComment, onShare, onSave, navigate }: any) {
       </div>
 
       {/* Text body */}
-      <div className="px-4 pb-3">
+      <div 
+        className="px-4 pb-3 relative"
+        onPointerDown={() => onPickerDown?.(post.id)}
+        onPointerUp={onPickerUp}
+        onPointerLeave={onPickerUp}
+        onDoubleClick={() => onLike(post.id)}
+      >
+        {/* Reaction picker */}
+        <AnimatePresence>
+          {pickerPostId === post.id && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
+              className="absolute z-50 flex gap-2 bg-black/60 backdrop-blur-xl px-3 py-2 rounded-full border border-white/20 shadow-2xl left-1/2 -translate-x-1/2 top-full mt-2"
+            >
+              {SKRIM_REACTIONS.map(r => (
+                <motion.div key={r.id} whileHover={{ scale: 1.4 }} className="px-1 cursor-pointer"
+                  onClick={e => { e.stopPropagation(); triggerReaction(post.id, r); }}>
+                  <span className="text-2xl">{r.emoji}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <p className={`text-[15px] leading-relaxed font-medium ${hasCustomColor ? 'text-black' : 'text-white'}`}>
           {post.text.split(' ').map((w: string, i: number) =>
             w.startsWith('#') ? (
@@ -260,38 +285,47 @@ function TextPost({ post, onLike, onComment, onShare, onSave, navigate }: any) {
       </div>
 
       {/* Actions */}
-      <div className={`border-t px-4 py-3 flex items-center gap-5 ${hasCustomColor ? 'border-black/10' : 'border-white/5'}`}>
-        <button onClick={() => onLike(post.id)} className="flex items-center gap-1.5 group">
-          <Zap className={`w-5 h-5 transition-all ${post.isLiked ? 'text-[#B026FF] fill-[#B026FF]' : hasCustomColor ? 'text-black/40 group-hover:text-[#B026FF]' : 'text-white/50 group-hover:text-[#B026FF]'}`} />
-          <LiveCounter count={post.likes} />
-        </button>
-        <button onClick={() => onComment(post.id)} className="flex items-center gap-1.5 group">
-          <MessageCircle className={`w-5 h-5 group-hover:text-[#B026FF] ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`} />
-          <span className={`text-xs ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`}>{fmt(post.comments)}</span>
-        </button>
-        <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
-          <svg viewBox="0 0 24 24" className={`w-5 h-5 group-hover:text-[#B026FF] transition-colors ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            {/* Skrim Boost: circular arrow with spark */}
-            <path d="M12 3a9 9 0 1 0 9 9"/>
-            <polyline points="16 3 21 3 21 8"/>
-            <line x1="12" y1="12" x2="12" y2="8"/>
-            <line x1="12" y1="8" x2="10" y2="10"/>
-            <line x1="12" y1="8" x2="14" y2="10"/>
-          </svg>
-          <span className={`text-xs ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`}>{fmt(post.shares)}</span>
-        </button>
-        <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
-          <svg viewBox="0 0 24 24" className={`w-5 h-5 group-hover:text-[#00F0FF] transition-colors ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            {/* Skrim Beam: signal/broadcast waves pointing right */}
-            <circle cx="6" cy="12" r="1.5" fill="currentColor" stroke="none"/>
-            <path d="M9.5 8.5a6 6 0 0 1 0 7"/>
-            <path d="M13 6a10 10 0 0 1 0 12"/>
-            <path d="M16.5 3.5a14 14 0 0 1 0 17"/>
-          </svg>
-        </button>
-        <button onClick={() => onSave(post.id)} className="ml-auto">
-          <Bookmark className={`w-5 h-5 ${post.isSaved ? 'text-[#B026FF] fill-[#B026FF]' : hasCustomColor ? 'text-black/30' : 'text-white/30'}`} />
-        </button>
+      <div className="flex flex-col">
+        <div className={`border-t px-4 py-3 flex items-center gap-5 ${hasCustomColor ? 'border-black/10' : 'border-white/5'}`}>
+          <button onClick={() => onLike(post.id)} className="flex items-center gap-1.5 group">
+            <Zap className={`w-5 h-5 transition-all ${post.isLiked ? 'text-[#B026FF] fill-[#B026FF]' : hasCustomColor ? 'text-black/40 group-hover:text-[#B026FF]' : 'text-white/50 group-hover:text-[#B026FF]'}`} />
+            <LiveCounter count={post.likes} />
+          </button>
+          <button onClick={() => onComment(post.id)} className="flex items-center gap-1.5 group">
+            <MessageCircle className={`w-5 h-5 group-hover:text-[#B026FF] ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`} />
+            <span className={`text-xs ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`}>{fmt(post.comments)}</span>
+          </button>
+          <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
+            <svg viewBox="0 0 24 24" className={`w-5 h-5 group-hover:text-[#B026FF] transition-colors ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 3a9 9 0 1 0 9 9"/>
+              <polyline points="16 3 21 3 21 8"/>
+              <line x1="12" y1="12" x2="12" y2="8"/>
+              <line x1="12" y1="8" x2="10" y2="10"/>
+              <line x1="12" y1="8" x2="14" y2="10"/>
+            </svg>
+            <span className={`text-xs ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`}>{fmt(post.shares)}</span>
+          </button>
+          <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
+            <svg viewBox="0 0 24 24" className={`w-5 h-5 group-hover:text-[#00F0FF] transition-colors ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="6" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+              <path d="M9.5 8.5a6 6 0 0 1 0 7"/>
+              <path d="M13 6a10 10 0 0 1 0 12"/>
+              <path d="M16.5 3.5a14 14 0 0 1 0 17"/>
+            </svg>
+          </button>
+          <button onClick={() => onSave(post.id)} className="ml-auto">
+            <Bookmark className={`w-5 h-5 ${post.isSaved ? 'text-[#B026FF] fill-[#B026FF]' : hasCustomColor ? 'text-black/30' : 'text-white/30'}`} />
+          </button>
+        </div>
+        {post.reactions && (
+          <div className="px-4 pb-3">
+            <ReactionRow
+              initialReactions={post.reactions}
+              activeReactionId={post.myReactionId || null}
+              onReact={(reactionId) => onReact?.(post.id, reactionId)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1713,6 +1747,7 @@ function PulseCreateSheet({ isOpen, onClose, currentUser, onPost, onSchedule, dr
       likes: 0,
       comments: 0,
       shares: 0,
+      reactions: { pulse: 0, blaze: 0, vibe: 0, nova: 0, slay: 0 },
       isLiked: false,
       isSaved: false,
       mood,
@@ -2982,7 +3017,9 @@ export default function PulseScreen() {
           if (post.type === 'text')           return (
             <TextPost key={post.id} post={post} onLike={handleLike}
               onComment={setActiveCommentsPostId} onShare={(id: string, view?: string) => { if (view === 'send') setActiveSendPostId(id); else setActiveResharePostId(id); }}
-              onSave={handleSave} navigate={navigate} />
+              onSave={handleSave} onReact={handleReact} navigate={navigate}
+              onPickerDown={handlePickerDown} onPickerUp={handlePickerUp}
+              pickerPostId={pickerPostId} triggerReaction={triggerReaction} />
           );
           if (post.type === 'poll')           return (
             <PollPost key={post.id} post={post} onLike={handleLike}
