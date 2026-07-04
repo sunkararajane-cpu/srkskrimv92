@@ -297,7 +297,7 @@ function TextPost({ post, onLike, onComment, onShare, onSave, onReact, navigate,
             <span className={`text-xs ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`}>{fmt(post.comments)}</span>
           </button>
           
-          <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
+          <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group">
             <svg viewBox="0 0 24 24" className={`w-5 h-5 transition-colors ${hasCustomColor ? 'text-black/40 group-hover:text-[#B026FF]' : 'text-white/50 group-hover:text-[#B026FF]'}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
               <path d="M13 4.5l3.5 3-3.5 3" />
@@ -306,7 +306,7 @@ function TextPost({ post, onLike, onComment, onShare, onSave, onReact, navigate,
             </svg>
             <span className={`text-xs ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`}>{fmt(post.shares)}</span>
           </button>
-          <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
+          <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group">
             <svg viewBox="0 0 24 24" className="w-5 h-5 transition-colors ${hasCustomColor ? 'text-black/40 group-hover:text-[#00F0FF]' : 'text-white/50 group-hover:text-[#00F0FF]'}" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M2 12h3l3-5 5 10 3-5h5" />
             <path d="M17 8l4 4-4 4" />
@@ -435,7 +435,7 @@ function PollPost({ post, onLike, onComment, onShare, onSave, navigate, currentU
           <span className="text-xs text-white/50">{fmt(post.comments)}</span>
         </button>
         
-        <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
+        <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group">
           <svg viewBox="0 0 24 24" className="w-5 h-5 text-white/50 group-hover:text-[#B026FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
             <path d="M13 4.5l3.5 3-3.5 3" />
@@ -443,7 +443,7 @@ function PollPost({ post, onLike, onComment, onShare, onSave, navigate, currentU
             <path d="M11 19.5l-3.5-3 3.5-3" />
           </svg>
         </button>
-        <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
+        <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group">
           <svg viewBox="0 0 24 24" className="w-5 h-5 text-white/50 group-hover:text-[#00F0FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M2 12h3l3-5 5 10 3-5h5" />
             <path d="M17 8l4 4-4 4" />
@@ -773,7 +773,7 @@ function PostActions({ post, onLike, onComment, onShare, onSave, onReact, naviga
         </button>
         
         {/* Reshare */}
-        <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
+        <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group">
           <svg viewBox="0 0 24 24" className="w-6 h-6 text-white group-hover:text-[#B026FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
             <path d="M13 4.5l3.5 3-3.5 3" />
@@ -783,7 +783,7 @@ function PostActions({ post, onLike, onComment, onShare, onSave, onReact, naviga
           <span className="text-xs text-gray-300">{fmt(post.shares)}</span>
         </button>
         {/* Send */}
-        <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
+        <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group">
           <svg viewBox="0 0 24 24" className="w-5 h-5 text-white group-hover:text-[#00F0FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M2 12h3l3-5 5 10 3-5h5" />
             <path d="M17 8l4 4-4 4" />
