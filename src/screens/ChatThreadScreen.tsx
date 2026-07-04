@@ -1,3 +1,4 @@
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
@@ -1047,6 +1048,17 @@ export default function ChatThreadScreen() {
             
             {/* Media Content */}
             <div className="flex-1 overflow-hidden relative flex items-center justify-center">
+               {mediaViewer.type === 'post_photo' && (
+                 <TransformWrapper>
+                   <TransformComponent wrapperClass="!w-screen !h-screen flex items-center justify-center relative">
+                     <img 
+                       src={mediaViewer.photoUrl} 
+                       alt="Pulse Preview" 
+                       className="max-w-full max-h-[85vh] object-contain select-none cursor-zoom-in" 
+                     />
+                   </TransformComponent>
+                 </TransformWrapper>
+               )}
                {mediaViewer.type === 'photo' && (
                  <div 
                    className="w-full flex-1 flex items-center justify-center text-[150px] relative"
@@ -1073,6 +1085,9 @@ export default function ChatThreadScreen() {
                <span className="text-white/70 text-sm">Today, {mediaViewer.time}</span>
                {mediaViewer.type === 'photo' && mediaViewer.photo.caption && (
                  <div className="text-white mt-2 font-medium">{mediaViewer.photo.caption}</div>
+               )}
+               {mediaViewer.type === 'post_photo' && mediaViewer.postCaption && (
+                 <div className="text-white mt-2 font-medium">{mediaViewer.postCaption}</div>
                )}
             </div>
           </motion.div>

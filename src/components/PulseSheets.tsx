@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X, Send, Zap, MessageCircle, Link as LinkIcon,
-  Repeat2, Quote, Search, Check, MessageSquare,
+  Repeat2, Quote, Search, Check, MessageSquare, Share2, Copy, Sparkles,
 } from 'lucide-react';
 import { AvatarWithRing } from './ui';
 import { getPostComments, addPostComment, PulseComment } from '../lib/mock/pulseComments';
@@ -451,15 +451,29 @@ const EXTRA_PLATFORMS = [
   },
 ];
 
+
+
+const SOCIAL_PLATFORMS = [
+  { id: 'whatsapp', label: 'WhatsApp', bg: '#25D366', action: (url: string) => window.open(`https://wa.me/?text=${encodeURIComponent(url)}`, '_blank'), svg: <svg viewBox="0 0 24 24" className="w-7 h-7" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> },
+  { id: 'twitter', label: 'X (Twitter)', bg: '#000000', border: true, action: (url: string) => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank'), svg: <svg viewBox="0 0 24 24" className="w-5 h-5" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
+  { id: 'facebook', label: 'Facebook', bg: '#1877F2', action: (url: string) => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank'), svg: <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> },
+  { id: 'reddit', label: 'Reddit', bg: '#FF4500', action: (url: string) => window.open(`https://reddit.com/submit?url=${encodeURIComponent(url)}`, '_blank'), svg: <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg> },
+  { id: 'telegram', label: 'Telegram', bg: '#0088cc', action: (url: string) => window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}`, '_blank'), svg: <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.96 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg> },
+];
+
+
 export function PulseSendSheet({
   isOpen, onClose, post, onShareComplete
 }: {
   isOpen: boolean; onClose: () => void; post: any;
   onShareComplete: (type: string, message: string) => void;
 }) {
+  const [activeView, setActiveView] = useState<'share' | 'connect'>('share');
+  
+  // Connect picker state
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [showAllPlatforms, setShowAllPlatforms] = useState(false);
 
   const shareUrl = typeof window !== 'undefined'
@@ -467,9 +481,11 @@ export function PulseSendSheet({
     : `skrim.chat/pulse/post`;
 
   const allContacts = mockUsers.slice(0, 12).map(u => ({
+    id: u.id,
     username: u.username?.replace('@', '') || u.id,
     displayName: u.displayName || u.username || '',
     avatar: u.avatar,
+    isVerified: u.isVerified,
   }));
 
   const filteredContacts = searchQuery.trim()
@@ -480,24 +496,55 @@ export function PulseSendSheet({
     : allContacts;
 
   useEffect(() => {
-    if (isOpen) { setSelectedContacts([]); setSearchQuery(''); setCopied(false); setShowAllPlatforms(false); }
+    if (isOpen) { 
+      setActiveView('share');
+      setSelectedContacts([]); 
+      setSearchQuery(''); 
+      setCopiedLink(false); 
+      setShowAllPlatforms(false); 
+    }
   }, [isOpen]);
 
   const close = (msg?: string) => {
     if (msg) onShareComplete('send', msg);
     setTimeout(onClose, 200);
-    setTimeout(() => { setSelectedContacts([]); setSearchQuery(''); }, 500);
+    setTimeout(() => { 
+      setActiveView('share');
+      setSelectedContacts([]); 
+      setSearchQuery(''); 
+    }, 500);
   };
 
-  const toggleContact = (username: string) =>
+  const toggleContact = (id: string) =>
     setSelectedContacts(prev =>
-      prev.includes(username) ? prev.filter(u => u !== username) : [...prev, username]
+      prev.includes(id) ? prev.filter(u => u !== id) : [...prev, id]
     );
 
-  const handleCopy = () => {
+  const handleCopyLink = () => {
     navigator.clipboard.writeText(`https://${shareUrl}`).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+    close('🔗 Link copied!');
+  };
+
+  const handleShareOption = (option: string) => {
+    if (option === 'Connect') {
+      setActiveView('connect');
+    } else if (option === 'your story') {
+      close('✨ Added to your Pulse!');
+    } else if (option === 'Arattai') {
+      handleCopyLink();
+      close('💬 Shared to Arattai!');
+    } else if (option === 'Copy') {
+      handleCopyLink();
+    } else {
+      // Social options
+      const platform = SOCIAL_PLATFORMS.find(p => p.label === option);
+      if (platform && platform.action) {
+        platform.action(`https://${shareUrl}`);
+        close(`Shared to ${platform.label}!`);
+      }
+    }
   };
 
   const handleSendInApp = () => {
@@ -505,7 +552,14 @@ export function PulseSendSheet({
     try {
       const customChats: Record<string, any[]> = JSON.parse(localStorage.getItem('skrimchat_custom_chats') || '{}');
       const thumbnail = post.image || post.images?.[0] || null;
-      selectedContacts.forEach(username => {
+      
+      const sentToNames: string[] = [];
+      
+      selectedContacts.forEach(userId => {
+        const contact = allContacts.find(u => u.id === userId);
+        const username = contact?.username || userId;
+        sentToNames.push(username);
+        
         const message = {
           id: `postshare_${post.id}_${Date.now()}_${username}`,
           sender: 'me',
@@ -518,15 +572,20 @@ export function PulseSendSheet({
           status: 'sent',
           timestamp: Date.now(),
         };
+
         if (!customChats[username]) customChats[username] = [];
         customChats[username].push(message);
       });
+
       localStorage.setItem('skrimchat_custom_chats', JSON.stringify(customChats));
-      window.dispatchEvent(new CustomEvent('skrimchat_post_shared', { detail: { usernames: selectedContacts } }));
+      window.dispatchEvent(new CustomEvent('skrimchat_post_shared', { detail: { usernames: sentToNames } }));
       window.dispatchEvent(new CustomEvent('skrimchat_custom_chats_updated'));
-      const label = selectedContacts.length === 1 ? `@${selectedContacts[0]}` : `${selectedContacts.length} people`;
+
+      const label = selectedContacts.length === 1 ? `@${sentToNames[0]}` : `${selectedContacts.length} people`;
       close(`💬 Pulse sent to ${label}!`);
-    } catch (e) { close('💬 Sent!'); }
+    } catch (e) {
+      close('💬 Sent!');
+    }
   };
 
   return (
@@ -544,216 +603,166 @@ export function PulseSendSheet({
             className="bg-[rgba(20,20,20,0.95)] border-t border-white/10 rounded-t-3xl flex flex-col w-full max-w-2xl mx-auto shadow-2xl pb-8"
             style={{ maxHeight: '90vh' }}
           >
-            {/* Header */}
-            <div className="p-4 border-b border-white/10 flex items-center justify-between rounded-t-3xl shrink-0">
-              <h3 className="text-lg font-bold text-white pl-2">📤 Send Pulse</h3>
-              <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
-                <X className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-4 p-4 flex-1 overflow-y-auto no-scrollbar">
-
-              {/* ── URL bar ── */}
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl">
-                <span className="text-white/50 text-sm flex-1 truncate font-mono">{shareUrl}</span>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleCopy(); }}
-                  className={`shrink-0 text-sm font-bold px-3 py-1 rounded-lg transition-all ${copied ? 'text-green-400' : 'text-[#B026FF] hover:text-[#B026FF]/80'}`}
-                >
-                  {copied ? 'Copied!' : 'Copy'}
-                </button>
-              </div>
-
-              {/* ── Social platforms ── */}
-              <div>
-                <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-3">Share to Social Media</p>
-                <div className="grid grid-cols-4 gap-3">
-                  {(showAllPlatforms ? [...SEND_PLATFORMS, ...EXTRA_PLATFORMS] : SEND_PLATFORMS).map(p => (
-                    <button
-                      key={p.id}
-                      onClick={(e) => { e.stopPropagation(); p.action(`https://${shareUrl}`); }}
-                      className="flex flex-col items-center gap-2 group"
-                    >
-                      <div
-                        className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 group-active:scale-95 transition-transform border"
-                        style={{
-                          background: p.bg,
-                          borderColor: (p as any).border ? 'rgba(255,255,255,0.2)' : 'transparent',
-                        }}
-                      >
-                        {(p as any).svg}
-                      </div>
-                      <span className="text-[11px] text-gray-300 font-medium text-center leading-tight">{p.label}</span>
-                    </button>
-                  ))}
-                  {/* See all → native OS share sheet */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (navigator.share) {
-                        navigator.share({
-                          title: 'Check this out on Skrim',
-                          text: post?.caption || post?.text || 'Check this pulse on Skrim!',
-                          url: `https://${shareUrl}`,
-                        }).catch(() => {});
-                      } else {
-                        // Fallback: copy to clipboard if Web Share API not supported
-                        navigator.clipboard.writeText(`https://${shareUrl}`).catch(() => {});
-                        alert('Link copied! Web Share not supported on this browser.');
-                      }
-                    }}
-                    className="flex flex-col items-center gap-2 group"
-                  >
-                    <div className="w-14 h-14 rounded-2xl bg-white/8 border border-white/15 flex items-center justify-center group-hover:scale-110 group-active:scale-95 transition-transform">
-                      <span className="text-white text-2xl font-bold">···</span>
-                    </div>
-                    <span className="text-[11px] text-gray-300 font-medium">See all</span>
+            {activeView === 'share' ? (
+              <div className="px-5 flex flex-col pt-4">
+                <div className="flex justify-between items-center mb-5 sticky top-0 bg-transparent py-2 z-10 border-b border-white/5 pb-4">
+                  <h3 className="font-bold text-white text-lg flex items-center gap-2">
+                    <Share2 className="w-5 h-5 text-[#B026FF]" /> Share Pulse ⚡
+                  </h3>
+                  <button onClick={onClose} className="p-1.5 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
+                    <X className="w-5 h-5 text-white" />
                   </button>
                 </div>
-              </div>
 
-              {/* ── Divider ── */}
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-white/10" />
-                <span className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Or send in app</span>
-                <div className="flex-1 h-px bg-white/10" />
-              </div>
-
-              {/* ── Search people ── */}
-              <div className="relative shrink-0">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                <input
-                  type="text"
-                  placeholder="Search people..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-10 pr-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#00F0FF]/50"
-                />
-              </div>
-
-              {/* Selected chips */}
-              {selectedContacts.length > 0 && (
-                <div className="flex items-center gap-2 flex-wrap shrink-0">
-                  {selectedContacts.map(u => (
-                    <div key={u} className="flex items-center gap-1 px-2 py-1 bg-[#00F0FF]/15 border border-[#00F0FF]/30 rounded-full">
-                      <span className="text-[#00F0FF] text-xs font-bold">@{u}</span>
-                      <button onClick={() => toggleContact(u)} className="text-white/40 hover:text-white">
-                        <X className="w-3 h-3" />
-                      </button>
+                {/* Primary actions */}
+                <div className="flex flex-col gap-2 mb-5">
+                  {/* Share to your Pulse */}
+                  <button
+                    onClick={() => handleShareOption("your story")}
+                    className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-[#B026FF]/10 border border-[#B026FF]/30 hover:bg-[#B026FF]/20 transition-colors"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-[#B026FF]/30 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-5 h-5 text-[#B026FF]" />
                     </div>
-                  ))}
+                    <div className="text-left">
+                      <div className="text-white font-bold">Add to your Pulse</div>
+                      <div className="text-[#B026FF]/70 text-xs mt-0.5">Reposts this to your pulse — live for 24h</div>
+                    </div>
+                  </button>
+
+                  {/* Send in Connect — to a specific user */}
+                  <button
+                    onClick={() => handleShareOption("Connect")}
+                    className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 transition-colors"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-blue-500/30 flex items-center justify-center shrink-0">
+                      <MessageSquare className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-white font-bold">Send in Connect</div>
+                      <div className="text-blue-400/70 text-xs mt-0.5">Pick a contact — opens their chat directly</div>
+                    </div>
+                  </button>
+
+                  {/* Share in Arattai + copy link */}
+                  <button
+                    onClick={() => handleShareOption("Arattai")}
+                    className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-green-500/10 border border-green-500/30 hover:bg-green-500/20 transition-colors"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shrink-0 text-xl">
+                      💬
+                    </div>
+                    <div className="text-left flex-1">
+                      <div className="text-white font-bold">Share in Arattai</div>
+                      <div className="text-green-400/70 text-xs mt-0.5">Posts to Arattai feed + copies link</div>
+                    </div>
+                  </button>
+                  
+                  {/* Copy link */}
+                  <button
+                    onClick={() => handleShareOption("Copy")}
+                    className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                      <Copy className="w-5 h-5 text-white/70" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-white font-bold">{copiedLink ? "Copied!" : "Copy Link"}</div>
+                      <div className="text-white/50 text-xs mt-0.5">{shareUrl}</div>
+                    </div>
+                  </button>
                 </div>
-              )}
 
-              {/* Contact list */}
-              <div className="flex flex-col gap-1">
-                {filteredContacts.map(u => {
-                  const isSelected = selectedContacts.includes(u.username);
-                  return (
-                    <button
-                      key={u.username}
-                      onClick={() => toggleContact(u.username)}
-                      className={`flex items-center gap-3 p-3 rounded-2xl transition-colors text-left ${isSelected ? 'bg-[#00F0FF]/10 border border-[#00F0FF]/40' : 'hover:bg-white/8 border border-transparent'}`}
-                    >
-                      <AvatarWithRing src={u.avatar} size="md" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-white font-semibold text-sm truncate">{u.displayName}</div>
-                        <div className="text-xs text-gray-500">@{u.username}</div>
-                      </div>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${isSelected ? 'bg-[#00F0FF] border-[#00F0FF]' : 'border-white/20'}`}>
-                        {isSelected && <Check className="w-3 h-3 text-black" />}
-                      </div>
-                    </button>
-                  );
-                })}
-                {filteredContacts.length === 0 && (
-                  <div className="text-center py-6 text-white/30 text-sm">No users found</div>
-                )}
+                {/* External Shares Grid */}
+                <div>
+                  <div className="flex justify-between items-center mb-3 px-1">
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Share Externally</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-y-4 gap-x-2">
+                    {SOCIAL_PLATFORMS.filter(p => p.id !== 'copy').map(p => (
+                      <button key={p.id} onClick={() => handleShareOption(p.label)} className="flex flex-col items-center gap-1.5 group">
+                        <div
+                          className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform text-xl border"
+                          style={{ background: p.bg, borderColor: (p as any).border ? 'rgba(255,255,255,0.15)' : 'transparent' }}
+                        >
+                          {p.svg}
+                        </div>
+                        <span className="text-[11px] text-gray-300 font-medium whitespace-nowrap">{p.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
+            ) : (
+              <div className="px-5 flex flex-col pt-4 h-[60vh] sm:h-[70vh]">
+                <div className="flex justify-between items-center mb-4 shrink-0">
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setActiveView('share')} className="p-1.5 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-white">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <h3 className="font-bold text-white text-lg">Send to...</h3>
+                  </div>
+                  <button onClick={onClose} className="p-1.5 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
+                    <X className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+                
+                <div className="relative mb-4 shrink-0">
+                  <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search contacts..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white text-sm outline-none focus:border-[#B026FF]/50 transition-colors"
+                  />
+                </div>
 
-              {/* Send in-app button */}
-              {selectedContacts.length > 0 && (
+                <div className="overflow-y-auto no-scrollbar flex-1 mb-4 flex flex-col gap-1 min-h-0">
+                  {filteredContacts.map(u => {
+                    const isSelected = selectedContacts.includes(u.id);
+                    return (
+                      <button
+                        key={u.id}
+                        onClick={() => toggleContact(u.id)}
+                        className={`flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors text-left ${isSelected ? "bg-white/10" : ""}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-white/10">
+                            <img src={u.avatar} alt={u.displayName} className="w-full h-full object-cover" />
+                          </div>
+                          <div>
+                            <div className="text-white font-semibold flex items-center gap-1.5">
+                              {u.displayName}
+                              {u.isVerified && (
+                                <div className="w-3.5 h-3.5 bg-blue-500 rounded-full flex items-center justify-center">
+                                  <Check className="w-2.5 h-2.5 text-white" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-400">@{u.username}</div>
+                          </div>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? "bg-[#B026FF] border-[#B026FF]" : "border-white/20"}`}>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
                 <button
                   onClick={handleSendInApp}
-                  className="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-[#00F0FF] to-[#00B8CC] text-black flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-[0_4px_20px_rgba(0,240,255,0.3)] shrink-0"
+                  disabled={selectedContacts.length === 0}
+                  className={`w-full py-3.5 rounded-full font-bold shadow-lg transition-all shrink-0 ${selectedContacts.length > 0 ? "bg-gradient-to-r from-[#B026FF] to-[#00F0FF] text-white hover:opacity-90" : "bg-white/10 text-white/40 cursor-not-allowed"}`}
                 >
-                  <Send className="w-4 h-4" />
-                  Send Pulse to {selectedContacts.length} {selectedContacts.length === 1 ? 'person' : 'people'}
+                  {selectedContacts.length > 0
+                    ? `Send to ${selectedContacts.length} ⚡`
+                    : "Send ⚡"}
                 </button>
-              )}
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-// ─── Legacy external share sheet ─────────────────────────────────────────────
-
-const SOCIAL_PLATFORMS = [
-  { id: 'whatsapp', label: 'WhatsApp', emoji: '💬', bg: '#25D366', action: () => window.open('https://wa.me/', '_blank') },
-  { id: 'twitter', label: 'X', emoji: '𝕏', bg: '#000', border: true, action: () => window.open('https://twitter.com/intent/tweet', '_blank') },
-  { id: 'telegram', label: 'Telegram', emoji: '✈️', bg: '#2CA5E0', action: () => window.open('https://t.me/share/', '_blank') },
-  { id: 'instagram', label: 'Instagram', emoji: '📸', bg: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', action: () => {} },
-  { id: 'facebook', label: 'Facebook', emoji: '👤', bg: '#1877F2', action: () => window.open('https://facebook.com/sharer', '_blank') },
-  { id: 'arattai', label: 'Arattai', emoji: '🇮🇳', bg: '#202020', border: true, action: () => {} },
-  { id: 'copy', label: 'Copy Link', emoji: '🔗', bg: '#333', action: () => { navigator.clipboard.writeText(window.location.href).catch(() => {}); } },
-];
-
-export function PulseShareSheet({
-  isOpen, onClose, post, currentUser, onShareComplete, initialView = 'main'
-}: {
-  isOpen: boolean; onClose: () => void; post: any; currentUser: any;
-  onShareComplete: (type: string, message: string) => void;
-  initialView?: 'main' | 'reshare' | 'send' | 'quote';
-}) {
-  const [copiedLink, setCopiedLink] = useState(false);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href).catch(() => {});
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
-    onShareComplete('share', '🔗 Link copied!');
-    setTimeout(onClose, 200);
-  };
-
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end"
-        >
-          <motion.div
-            initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            onClick={e => e.stopPropagation()}
-            className="bg-[rgba(20,20,20,0.95)] border-t border-white/10 rounded-t-3xl flex flex-col w-full max-w-2xl mx-auto shadow-2xl pb-8"
-          >
-            <div className="p-4 border-b border-white/10 flex items-center justify-between rounded-t-3xl">
-              <h3 className="text-lg font-bold text-white pl-2">🔗 Share Externally</h3>
-              <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
-                <X className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
-            <div className="p-4">
-              <div className="grid grid-cols-4 gap-3">
-                {SOCIAL_PLATFORMS.map(p => (
-                  <button key={p.id} onClick={p.id === 'copy' ? handleCopyLink : p.action} className="flex flex-col items-center gap-2 group">
-                    <div
-                      className="w-14 h-14 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform text-xl border"
-                      style={{ background: p.bg, borderColor: (p as any).border ? 'rgba(255,255,255,0.15)' : 'transparent' }}
-                    >
-                      {p.id === 'copy' && copiedLink ? <Check className="w-5 h-5 text-green-400" /> : <span>{p.emoji}</span>}
-                    </div>
-                    <span className="text-xs text-gray-300 font-medium">{p.id === 'copy' && copiedLink ? 'Copied!' : p.label}</span>
-                  </button>
-                ))}
               </div>
-            </div>
+            )}
           </motion.div>
         </motion.div>
       )}

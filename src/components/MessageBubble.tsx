@@ -515,7 +515,20 @@ export function MessageBubble({ message, isConsecutiveTop, isConsecutiveBottom, 
             onClick={() => { try { (window as any).__skrimNavigate?.(`/post/${message.postId}`); } catch(e){} }}
           >
             {message.postThumbnail ? (
-              <div className="relative w-full aspect-square overflow-hidden">
+              <div className="relative w-full aspect-square overflow-hidden cursor-zoom-in"
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     window.dispatchEvent(new CustomEvent('open-media-viewer', { 
+                       detail: { 
+                         type: 'post_photo', 
+                         photoUrl: message.postThumbnail,
+                         time: message.time,
+                         sender: message.sender,
+                         postCaption: message.postCaption,
+                         postUser: message.postUser
+                       }
+                     }));
+                   }}>
                 <img
                   src={message.postThumbnail}
                   alt=""
