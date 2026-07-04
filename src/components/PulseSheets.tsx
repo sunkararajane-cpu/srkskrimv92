@@ -604,8 +604,8 @@ export function PulseSendSheet({
             style={{ maxHeight: '90vh' }}
           >
             {activeView === 'share' ? (
-              <div className="px-5 flex flex-col pt-4">
-                <div className="flex justify-between items-center mb-5 sticky top-0 bg-transparent py-2 z-10 border-b border-white/5 pb-4">
+              <div className="px-5 flex flex-col pt-4 overflow-y-auto overflow-x-hidden no-scrollbar" style={{ paddingBottom: 'env(safe-area-inset-bottom, 20px)' }}>
+                <div className="flex justify-between items-center mb-5 sticky top-0 bg-[#141414] py-2 z-10 border-b border-white/5 pb-4 -mx-5 px-5">
                   <h3 className="font-bold text-white text-lg flex items-center gap-2">
                     <Share2 className="w-5 h-5 text-[#B026FF]" /> Share Pulse ⚡
                   </h3>
