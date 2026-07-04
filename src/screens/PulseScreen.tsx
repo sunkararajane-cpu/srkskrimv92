@@ -3152,6 +3152,7 @@ export default function PulseScreen() {
         isOpen={!!activeSendPostId}
         onClose={() => setActiveSendPostId(null)}
         post={findPostById(posts, activeSendPostId)}
+        currentUser={currentUser}
         onShareComplete={(_: any, msg: string) => { toast(msg); }}
       />
       <StoryBehindSheet isOpen={!!storyBehindPostId} onClose={() => setStoryBehindPostId(null)}
