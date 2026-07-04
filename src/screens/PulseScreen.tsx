@@ -13,6 +13,7 @@ import { getMutedUsers, getBlockedUsers, getPostModerationSettings, savePostMode
 import { getPollState, castVote, type PollState } from '../lib/firebase/polls';
 import { useCurrentUser } from '../hooks/useCurrentUser';
 import { motion, AnimatePresence } from 'motion/react';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { SKRIM_REACTIONS } from '../lib/mock/mockData';
 import { BadgeRow } from '../components/BadgeComponents';
 import { ReactionRow } from '../components/ReactionRow';
@@ -2371,7 +2372,11 @@ function FullscreenMediaModal({ media, onClose }: { media: { url: string, type: 
           {media.type === 'video' ? (
             <video src={currentUrl} controls autoPlay className="max-w-full max-h-full" playsInline />
           ) : (
-            <img src={currentUrl} alt="" className="max-w-full max-h-[85vh] object-contain select-none" />
+            <TransformWrapper>
+              <TransformComponent wrapperClass="!w-screen !h-screen flex items-center justify-center">
+                <img src={currentUrl} alt="" className="max-w-full max-h-[85vh] object-contain select-none cursor-zoom-in" />
+              </TransformComponent>
+            </TransformWrapper>
           )}
 
           {isMulti && index > 0 && (
