@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { generateSinglePost } from '../lib/mock/skrimAlgorithm';
 import { useCurrentUser } from '../hooks/useCurrentUser';
-import { X, Heart, MessageCircle, Repeat2, Bookmark, Zap } from 'lucide-react';
+import { X, Heart, MessageCircle, Bookmark, Zap } from 'lucide-react';
 import { AvatarWithRing } from '../components/ui';
 
 /**
@@ -93,7 +93,12 @@ export default function PostDetailScreen() {
             <span className="text-xs text-white/50">{post.comments?.toLocaleString()}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Repeat2 className="w-5 h-5 text-white/50" />
+            <svg viewBox="0 0 24 24" className="w-5 h-5 text-white/50" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+              <path d="M13 4.5l3.5 3-3.5 3" />
+              <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+              <path d="M11 19.5l-3.5-3 3.5-3" />
+            </svg>
             <span className="text-xs text-white/50">{post.shares?.toLocaleString()}</span>
           </div>
           <Bookmark className="w-5 h-5 text-white/30 ml-auto" />

@@ -4,7 +4,7 @@ import { AvatarWithRing } from '../components/ui';
 import {
   Heart, MessageCircle, Bookmark, MoreHorizontal, Zap,
   SmilePlus, RefreshCw, X, Play, ChevronLeft, ChevronRight,
-  Music, MapPin, Repeat2, Quote, Flame, Plus, Images, Video, Send,
+  Music, MapPin, Quote, Flame, Plus, Images, Video, Send,
   Tag, Hash, Search, Check, Clock, Calendar, Trash2, FileEdit, BarChart3,
   Pause, Volume2, VolumeX,
 } from 'lucide-react';
@@ -298,7 +298,12 @@ function TextPost({ post, onLike, onComment, onShare, onSave, onReact, navigate,
           </button>
           
           <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
-            <Repeat2 className={`w-5 h-5 transition-colors ${hasCustomColor ? 'text-black/40 group-hover:text-[#B026FF]' : 'text-white/50 group-hover:text-[#B026FF]'}`} />
+            <svg viewBox="0 0 24 24" className={`w-5 h-5 transition-colors ${hasCustomColor ? 'text-black/40 group-hover:text-[#B026FF]' : 'text-white/50 group-hover:text-[#B026FF]'}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+              <path d="M13 4.5l3.5 3-3.5 3" />
+              <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+              <path d="M11 19.5l-3.5-3 3.5-3" />
+            </svg>
             <span className={`text-xs ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`}>{fmt(post.shares)}</span>
           </button>
           <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
@@ -428,7 +433,12 @@ function PollPost({ post, onLike, onComment, onShare, onSave, navigate, currentU
         </button>
         
         <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
-          <Repeat2 className="w-5 h-5 text-white/50 group-hover:text-[#B026FF] transition-colors" />
+          <svg viewBox="0 0 24 24" className="w-5 h-5 text-white/50 group-hover:text-[#B026FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+            <path d="M13 4.5l3.5 3-3.5 3" />
+            <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+            <path d="M11 19.5l-3.5-3 3.5-3" />
+          </svg>
         </button>
         <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
           <Send className="w-5 h-5 text-white/50 group-hover:text-[#00F0FF] transition-colors" />
@@ -463,7 +473,12 @@ function RepostCard({ post, onLike, onComment, onShare, onSave, onReact, navigat
     <div className="mb-6">
       {/* Repost attribution */}
       <div className="flex items-center gap-2 px-4 pb-2 text-white/40 text-xs font-semibold">
-        <Repeat2 className="w-3.5 h-3.5" />
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+            <path d="M13 4.5l3.5 3-3.5 3" />
+            <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+            <path d="M11 19.5l-3.5-3 3.5-3" />
+          </svg>
         <span className="cursor-pointer hover:underline" onClick={() => navigate(`/profile/${post.repostedBy.handle.replace('@', '')}`)}>
           {post.repostedBy.user}
         </span>
@@ -753,7 +768,12 @@ function PostActions({ post, onLike, onComment, onShare, onSave, onReact, naviga
         
         {/* Reshare */}
         <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
-          <Repeat2 className="w-6 h-6 text-white group-hover:text-[#B026FF] transition-colors" />
+          <svg viewBox="0 0 24 24" className="w-6 h-6 text-white group-hover:text-[#B026FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+            <path d="M13 4.5l3.5 3-3.5 3" />
+            <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+            <path d="M11 19.5l-3.5-3 3.5-3" />
+          </svg>
           <span className="text-xs text-gray-300">{fmt(post.shares)}</span>
         </button>
         {/* Send */}

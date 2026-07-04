@@ -197,7 +197,7 @@ export default function ConnectScreen() {
          const matchedUser = mockUsers.find(u => u.username?.replace('@', '') === key);
          const previewText =
            lastMsg.type === 'spark_share'
-             ? (lastMsg.isRepost ? '🔁⚡ Reposted a Spark' : '⚡ Sent you a Spark')
+             ? (lastMsg.isRepost ? '🔄⚡ Reposted a Spark' : '⚡ Sent you a Spark')
              : (lastMsg.text || lastMsg.caption || 'Sent a message');
          return {
             id: `custom_${key}`,

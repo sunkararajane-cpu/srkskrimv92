@@ -477,7 +477,7 @@ export function MessageBubble({ message, isConsecutiveTop, isConsecutiveBottom, 
               {/* Repost badge */}
               {message.isRepost && (
                 <div className="absolute top-2 left-2 bg-black/60 backdrop-blur px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <span className="text-[10px]">🔁</span>
+                  <span className="text-[10px]">🔄</span>
                   <span className="text-[9px] text-white/90 font-bold uppercase tracking-wide">Reposted</span>
                 </div>
               )}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X, Send, Zap, MessageCircle, Link as LinkIcon,
-  Repeat2, Quote, Search, Check, MessageSquare, Share2, Copy, Sparkles,
+  Quote, Search, Check, MessageSquare, Share2, Copy, Sparkles,
 } from 'lucide-react';
 import { AvatarWithRing } from './ui';
 import { getPostComments, addPostComment, PulseComment } from '../lib/mock/pulseComments';
@@ -278,7 +278,17 @@ export function PulseReshareSheet({
                 {view === 'quote' && (
                   <button onClick={() => setView('main')} className="mr-1 p-1.5 hover:bg-white/10 rounded-full transition-colors text-white">←</button>
                 )}
-                {view === 'main' ? '🔁 Reshare Pulse' : '💬 Quote Repost'}
+                {view === 'main' ? (
+                  <>
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#B026FF]" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+                      <path d="M13 4.5l3.5 3-3.5 3" />
+                      <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+                      <path d="M11 19.5l-3.5-3 3.5-3" />
+                    </svg>
+                    Reshare Pulse
+                  </>
+                ) : '💬 Quote Repost'}
               </h3>
               <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
                 <X className="w-5 h-5 text-gray-400" />
@@ -290,11 +300,16 @@ export function PulseReshareSheet({
                 <>
                   {/* Instant Repost */}
                   <button
-                    onClick={() => { buildRepost(''); close('🔁 Reposted to your feed!'); }}
+                    onClick={() => { buildRepost(''); close('🔄 Reposted to your feed!'); }}
                     className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors text-left group"
                   >
                     <div className="w-12 h-12 rounded-full bg-[#B026FF]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Repeat2 className="w-6 h-6 text-[#B026FF]" />
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#B026FF]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+                      <path d="M13 4.5l3.5 3-3.5 3" />
+                      <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+                      <path d="M11 19.5l-3.5-3 3.5-3" />
+                    </svg>
                     </div>
                     <div>
                       <div className="text-white font-semibold">Instant Repost</div>
@@ -353,10 +368,15 @@ export function PulseReshareSheet({
                     </div>
                   </div>
                   <button
-                    onClick={() => { buildRepost(quoteText); close('🔁 Quoted to your feed!'); }}
+                    onClick={() => { buildRepost(quoteText); close('🔄 Quoted to your feed!'); }}
                     className="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-[#B026FF] to-[#00F0FF] text-white flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-[0_4px_20px_rgba(176,38,255,0.3)]"
                   >
-                    <Repeat2 className="w-4 h-4" /> Post Quote
+                    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+                      <path d="M13 4.5l3.5 3-3.5 3" />
+                      <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+                      <path d="M11 19.5l-3.5-3 3.5-3" />
+                    </svg> Post Quote
                   </button>
                 </div>
               )}
@@ -645,7 +665,12 @@ export function PulseSendSheet({
                     className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-[#B026FF]/10 border border-[#B026FF]/30 hover:bg-[#B026FF]/20 transition-colors"
                   >
                     <div className="w-11 h-11 rounded-full bg-[#B026FF]/30 flex items-center justify-center shrink-0">
-                      <Repeat2 className="w-5 h-5 text-[#B026FF]" />
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#B026FF]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
+                      <path d="M13 4.5l3.5 3-3.5 3" />
+                      <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
+                      <path d="M11 19.5l-3.5-3 3.5-3" />
+                    </svg>
                     </div>
                     <div className="text-left">
                       <div className="text-white font-bold">Add to your Pulse</div>
