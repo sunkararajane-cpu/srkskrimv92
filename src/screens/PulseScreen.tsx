@@ -68,7 +68,7 @@ function LiveCounter({ count }: { count: number }) {
 // "colored text post" pattern (Twitter/Threads-style). When bgColor isn't
 // set (e.g. older posts created before this feature, or reposts of them),
 // it falls back to the original deterministic gradient so nothing breaks.
-function TextPost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction }: any) {
+function TextPost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction, onMediaClick }: any) {
   const gradients = [
     'from-[#1a0030] to-[#0d001a]',
     'from-[#001a30] to-[#00060d]',
@@ -338,7 +338,7 @@ function TextPost({ post, onLike, onComment, onShare, onSave, onReact, navigate,
 // fields. Votes are fetched once on mount and refreshed on the
 // 'skrimchat_poll_updated' event so a vote made elsewhere (or by the
 // local-storage fallback when Firestore isn't configured) shows up live.
-function PollPost({ post, onLike, onComment, onShare, onSave, navigate, currentUser }: any) {
+function PollPost({ post, onLike, onComment, onShare, onSave, navigate, currentUser, onMediaClick }: any) {
   const [poll, setPoll] = useState<PollState | null>(null);
   const [voting, setVoting] = useState(false);
   const voterId = currentUser?.username || currentUser?.handle || 'guest';
@@ -457,13 +457,13 @@ function PollPost({ post, onLike, onComment, onShare, onSave, navigate, currentU
 // would've used. All interactions on the embedded post route back to the
 // real post id via updatePostById, so liking a quoted post behaves
 // identically to liking it in its native spot in the feed.
-function RepostCard({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction, onStoryBehind, currentUser }: any) {
+function RepostCard({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction, onStoryBehind, currentUser, onMediaClick }: any) {
   const original = post.originalPost;
   if (!original) return null;
 
   const sharedProps = {
     post: original, onLike, onComment, onShare, onSave, onReact, navigate,
-    onPickerDown, onPickerUp, pickerPostId, triggerReaction, onStoryBehind, currentUser,
+    onPickerDown, onPickerUp, pickerPostId, triggerReaction, onStoryBehind, currentUser, onMediaClick,
   };
 
   return (
@@ -510,7 +510,7 @@ function RepostCard({ post, onLike, onComment, onShare, onSave, onReact, navigat
 }
 
 // ─── Multi-image carousel ─────────────────────────────────────
-function MultiImagePost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction }: any) {
+function MultiImagePost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction, onMediaClick }: any) {
   const [imgIdx, setImgIdx] = useState(0);
   const images = post.images || [post.image];
   const [isPlaying, setIsPlaying] = useState(false);
@@ -635,6 +635,7 @@ function MultiImagePost({ post, onLike, onComment, onShare, onSave, onReact, nav
         onPointerUp={onPickerUp}
         onPointerLeave={onPickerUp}
         onDoubleClick={() => onLike(post.id)}
+        onClick={() => onMediaClick?.(images[imgIdx], 'image', images, imgIdx)}
       >
         {hasMusic && (
           <audio
@@ -810,7 +811,7 @@ function PostActions({ post, onLike, onComment, onShare, onSave, onReact, naviga
 }
 
 // ─── Video-thumb post ─────────────────────────────────────────
-function VideoThumbPost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction }: any) {
+function VideoThumbPost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction, onMediaClick }: any) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -914,6 +915,7 @@ function VideoThumbPost({ post, onLike, onComment, onShare, onSave, onReact, nav
         onPointerDown={() => onPickerDown(post.id)}
         onPointerUp={onPickerUp} onPointerLeave={onPickerUp}
         onDoubleClick={() => onLike(post.id)}
+        onClick={() => onMediaClick?.(post.videoSrc || post.image, 'video')}
       >
         <video
           ref={videoRef}
@@ -984,7 +986,7 @@ function VideoThumbPost({ post, onLike, onComment, onShare, onSave, onReact, nav
 }
 
 // ─── Standard image post ──────────────────────────────────────
-function ImagePost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction, onStoryBehind, onMorePress }: any) {
+function ImagePost({ post, onLike, onComment, onShare, onSave, onReact, navigate, onPickerDown, onPickerUp, pickerPostId, triggerReaction, onStoryBehind, onMorePress, onMediaClick }: any) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -1110,6 +1112,7 @@ function ImagePost({ post, onLike, onComment, onShare, onSave, onReact, navigate
         onPointerDown={() => onPickerDown(post.id)}
         onPointerUp={onPickerUp} onPointerLeave={onPickerUp}
         onDoubleClick={() => onLike(post.id)}
+        onClick={() => onMediaClick?.(post.image, 'image')}
         onContextMenu={e => e.preventDefault()}
       >
         {hasMusic && (
@@ -2333,6 +2336,66 @@ function CommentWordFilter({ postId, initialWords, onSave }: { postId: string; i
   );
 }
 
+function FullscreenMediaModal({ media, onClose }: { media: { url: string, type: 'image' | 'video', images?: string[], initialIndex?: number } | null, onClose: () => void }) {
+  const [index, setIndex] = useState(media?.initialIndex || 0);
+
+  useEffect(() => {
+    if (media) setIndex(media.initialIndex || 0);
+  }, [media]);
+
+  if (!media) return null;
+
+  const isMulti = !!media.images && media.images.length > 1;
+  const currentUrl = isMulti ? media.images![index] : media.url;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[99999] bg-black/95 backdrop-blur-md flex items-center justify-center"
+        onClick={onClose}
+      >
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-white/10 rounded-full hover:bg-white/20 transition z-50">
+          <X className="w-6 h-6 text-white" />
+        </button>
+
+        {isMulti && (
+          <div className="absolute top-8 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium z-50">
+            {index + 1} / {media.images!.length}
+          </div>
+        )}
+
+        <div className="relative w-full h-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+          {media.type === 'video' ? (
+            <video src={currentUrl} controls autoPlay className="max-w-full max-h-full" playsInline />
+          ) : (
+            <img src={currentUrl} alt="" className="max-w-full max-h-[85vh] object-contain select-none" />
+          )}
+
+          {isMulti && index > 0 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setIndex(i => i - 1); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 rounded-full text-white hover:bg-black/80 transition"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+          )}
+
+          {isMulti && index < (media.images!.length - 1) && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setIndex(i => i + 1); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 rounded-full text-white hover:bg-black/80 transition"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          )}
+        </div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 export default function PulseScreen() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -2367,6 +2430,11 @@ export default function PulseScreen() {
   const [activeSendPostId, setActiveSendPostId] = useState<string | null>(null);
   const [storyBehindPostId, setStoryBehindPostId] = useState<string | null>(null);
   const [commentControlsPostId, setCommentControlsPostId] = useState<string | null>(null);
+  const [fullscreenMedia, setFullscreenMedia] = useState<{ url: string, type: 'image' | 'video', images?: string[], initialIndex?: number } | null>(null);
+
+  const handleMediaClick = (url: string, type: 'image' | 'video', images?: string[], initialIndex?: number) => {
+    setFullscreenMedia({ url, type, images, initialIndex });
+  };
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -3012,14 +3080,14 @@ export default function PulseScreen() {
               onSave={handleSave} onReact={handleReact} navigate={navigate}
               onPickerDown={handlePickerDown} onPickerUp={handlePickerUp}
               pickerPostId={pickerPostId} triggerReaction={triggerReaction}
-              onStoryBehind={setStoryBehindPostId} currentUser={currentUser} />
+              onStoryBehind={setStoryBehindPostId} onMediaClick={handleMediaClick} currentUser={currentUser} />
           );
           if (post.type === 'text')           return (
             <TextPost key={post.id} post={post} onLike={handleLike}
               onComment={setActiveCommentsPostId} onShare={(id: string, view?: string) => { if (view === 'send') setActiveSendPostId(id); else setActiveResharePostId(id); }}
               onSave={handleSave} onReact={handleReact} navigate={navigate}
               onPickerDown={handlePickerDown} onPickerUp={handlePickerUp}
-              pickerPostId={pickerPostId} triggerReaction={triggerReaction} />
+              pickerPostId={pickerPostId} triggerReaction={triggerReaction} onMediaClick={handleMediaClick} />
           );
           if (post.type === 'poll')           return (
             <PollPost key={post.id} post={post} onLike={handleLike}
@@ -3031,14 +3099,14 @@ export default function PulseScreen() {
               onComment={setActiveCommentsPostId} onShare={(id: string, view?: string) => { if (view === 'send') setActiveSendPostId(id); else setActiveResharePostId(id); }}
               onSave={handleSave} onReact={handleReact} navigate={navigate}
               onPickerDown={handlePickerDown} onPickerUp={handlePickerUp}
-              pickerPostId={pickerPostId} triggerReaction={triggerReaction} />
+              pickerPostId={pickerPostId} triggerReaction={triggerReaction} onMediaClick={handleMediaClick} />
           );
           if (post.type === 'video_thumb')    return (
             <VideoThumbPost key={post.id} post={post} onLike={handleLike}
               onComment={setActiveCommentsPostId} onShare={(id: string, view?: string) => { if (view === 'send') setActiveSendPostId(id); else setActiveResharePostId(id); }}
               onSave={handleSave} onReact={handleReact} navigate={navigate}
               onPickerDown={handlePickerDown} onPickerUp={handlePickerUp}
-              pickerPostId={pickerPostId} triggerReaction={triggerReaction} />
+              pickerPostId={pickerPostId} triggerReaction={triggerReaction} onMediaClick={handleMediaClick} />
           );
           return (
             <ImagePost key={post.id} post={post} onLike={handleLike}
@@ -3046,7 +3114,7 @@ export default function PulseScreen() {
               onSave={handleSave} onReact={handleReact} navigate={navigate}
               onPickerDown={handlePickerDown} onPickerUp={handlePickerUp}
               pickerPostId={pickerPostId} triggerReaction={triggerReaction}
-              onStoryBehind={setStoryBehindPostId}
+              onStoryBehind={setStoryBehindPostId} onMediaClick={handleMediaClick}
               onMorePress={(id: string) => {
                 const p = posts.find(x => x.id === id);
                 const isOwn = p && (p.handle === `@${currentUser?.handle}` || p.handle === currentUser?.handle);
@@ -3236,6 +3304,7 @@ export default function PulseScreen() {
         }}
       />
 
+      <FullscreenMediaModal media={fullscreenMedia} onClose={() => setFullscreenMedia(null)} />
       <style>{`
         @keyframes shimmer { 100% { transform: translateX(100%); } }
         @keyframes livePulse { 0%,100% { opacity:1;transform:scale(1); } 50% { opacity:0.5;transform:scale(1.3); } }
