@@ -662,25 +662,6 @@ export function PulseSendSheet({
 
                 {/* Primary actions */}
                 <div className="flex flex-col gap-2 mb-5">
-                  {/* Share to your Pulse */}
-                  <button
-                    onClick={() => handleShareOption("your story")}
-                    className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-[#B026FF]/10 border border-[#B026FF]/30 hover:bg-[#B026FF]/20 transition-colors"
-                  >
-                    <div className="w-11 h-11 rounded-full bg-[#B026FF]/30 flex items-center justify-center shrink-0">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#B026FF]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M4.5 14.5v-3a4 4 0 0 1 4-4h7.5" />
-                      <path d="M13 4.5l3.5 3-3.5 3" />
-                      <path d="M19.5 9.5v3a4 4 0 0 1-4 4h-7.5" />
-                      <path d="M11 19.5l-3.5-3 3.5-3" />
-                    </svg>
-                    </div>
-                    <div className="text-left">
-                      <div className="text-white font-bold">Add to your Pulse</div>
-                      <div className="text-[#B026FF]/70 text-xs mt-0.5">Reposts this to your pulse feed</div>
-                    </div>
-                  </button>
-
                   {/* Share as Spark */}
                   <button
                     onClick={handleShareAsSpark}
