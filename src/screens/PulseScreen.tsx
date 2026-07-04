@@ -307,7 +307,10 @@ function TextPost({ post, onLike, onComment, onShare, onSave, onReact, navigate,
             <span className={`text-xs ${hasCustomColor ? 'text-black/40' : 'text-white/50'}`}>{fmt(post.shares)}</span>
           </button>
           <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
-            <Send className={`w-5 h-5 transition-colors ${hasCustomColor ? 'text-black/40 group-hover:text-[#00F0FF]' : 'text-white/50 group-hover:text-[#00F0FF]'}`} />
+            <svg viewBox="0 0 24 24" className="w-5 h-5 transition-colors ${hasCustomColor ? 'text-black/40 group-hover:text-[#00F0FF]' : 'text-white/50 group-hover:text-[#00F0FF]'}" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M2 12h3l3-5 5 10 3-5h5" />
+            <path d="M17 8l4 4-4 4" />
+          </svg>
           </button>
 
 
@@ -441,7 +444,10 @@ function PollPost({ post, onLike, onComment, onShare, onSave, navigate, currentU
           </svg>
         </button>
         <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
-          <Send className="w-5 h-5 text-white/50 group-hover:text-[#00F0FF] transition-colors" />
+          <svg viewBox="0 0 24 24" className="w-5 h-5 text-white/50 group-hover:text-[#00F0FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M2 12h3l3-5 5 10 3-5h5" />
+            <path d="M17 8l4 4-4 4" />
+          </svg>
         </button>
 
         <button onClick={() => onSave(post.id)} className="ml-auto">
@@ -778,7 +784,10 @@ function PostActions({ post, onLike, onComment, onShare, onSave, onReact, naviga
         </button>
         {/* Send */}
         <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
-          <Send className="w-5 h-5 text-white group-hover:text-[#00F0FF] transition-colors" />
+          <svg viewBox="0 0 24 24" className="w-5 h-5 text-white group-hover:text-[#00F0FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M2 12h3l3-5 5 10 3-5h5" />
+            <path d="M17 8l4 4-4 4" />
+          </svg>
         </button>
 
         <button onClick={() => onSave(post.id)} className="ml-auto">

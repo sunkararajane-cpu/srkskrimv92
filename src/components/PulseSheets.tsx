@@ -143,7 +143,10 @@ export function PulseCommentsSheet({
                         className="bg-transparent text-sm text-white outline-none w-full pr-10"
                       />
                       <button onClick={handleSend} disabled={!commentInput.trim()} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 disabled:opacity-50 text-[#B026FF] hover:scale-110 active:scale-95 transition-transform">
-                        <Send className="w-4 h-4" />
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M2 12h3l3-5 5 10 3-5h5" />
+            <path d="M17 8l4 4-4 4" />
+          </svg>
                       </button>
                     </div>
                   </>
