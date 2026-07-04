@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import { PulseSendSheet } from "../components/PulseSheets";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
@@ -66,30 +67,9 @@ export default function WorldDetailScreen() {
     { id: number; angle: number; speed: number }[]
   >([]);
 
-  const handleShareWorld = async () => {
-    const shareUrl = `https://skrimchat.app/world/${world.id}`;
-    const shareData = {
-      title: world.name,
-      text: `Check out ${world.name} on SkrimChat ✦ ${world.description || ""}`,
-      url: shareUrl,
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-        return;
-      }
-    } catch {
-      // user cancelled the native share sheet, or it isn't available — fall back to clipboard
-    }
-
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setShareToast(`Link to ${world.name} copied`);
-    } catch {
-      setShareToast("Couldn't copy link");
-    }
-    setTimeout(() => setShareToast(null), 2500);
+  const [showShareSheet, setShowShareSheet] = useState(false);
+  const handleShareWorld = () => {
+    setShowShareSheet(true);
   };
 
   useEffect(() => {
@@ -865,6 +845,12 @@ export default function WorldDetailScreen() {
           </motion.div>
         )}
       </AnimatePresence>
+      <PulseSendSheet
+        isOpen={showShareSheet}
+        onClose={() => setShowShareSheet(false)}
+        post={{ id: `world_${world.id}`, caption: world.name, handle: world.name, user: world.name, image: (world as any).cover }}
+        onShareComplete={() => setShowShareSheet(false)}
+      />
     </div>
   );
 }
@@ -917,17 +903,17 @@ function HeroSection({
   return (
     <div className="relative h-[40vh] min-h-[320px] w-full mt-[-60px] pt-[60px] flex flex-col justify-end overflow-hidden pb-4">
       {/* Cover photo, if the creator chose one from their gallery */}
-      {world.cover && (
+      {(world as any).cover && (
         <div
           className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${world.cover})` }}
+          style={{ backgroundImage: `url(${(world as any).cover})` }}
         />
       )}
       {/* Background with Atmosphere Colors */}
       <div
         className="absolute inset-0 z-0 opacity-80"
         style={{
-          background: world.cover
+          background: (world as any).cover
             ? `linear-gradient(to bottom, ${colors[0]}30 0%, #0A0A14CC 60%, #0A0A14 100%)`
             : `linear-gradient(to bottom, ${colors[0]}40 0%, ${colors[1]}20 60%, #0A0A14 100%)`,
         }}
@@ -1110,6 +1096,7 @@ function HeroSection({
           </div>
         </div>
       </div>
+      
     </div>
   );
 }

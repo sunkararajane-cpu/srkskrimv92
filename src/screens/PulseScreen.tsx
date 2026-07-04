@@ -758,8 +758,8 @@ function PostActions({ post, onLike, onComment, onShare, onSave, onReact, naviga
           <MessageCircle className="w-6 h-6 text-white group-hover:text-[#B026FF]" />
           <span className="text-xs text-gray-300">{fmt(post.comments)}</span>
         </button>
-        {/* Reshare — Skrim Boost icon */}
-        <button onClick={() => onShare(post.id, 'reshare')} className="flex items-center gap-1.5 group" title="Reshare Pulse">
+        {/* Share */}
+        <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Share Pulse">
           <svg viewBox="0 0 24 24" className="w-6 h-6 text-white group-hover:text-[#B026FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 3a9 9 0 1 0 9 9"/>
             <polyline points="16 3 21 3 21 8"/>
@@ -768,15 +768,6 @@ function PostActions({ post, onLike, onComment, onShare, onSave, onReact, naviga
             <line x1="12" y1="8" x2="14" y2="10"/>
           </svg>
           <span className="text-xs text-gray-300">{fmt(post.shares)}</span>
-        </button>
-        {/* Send — Skrim Beam icon */}
-        <button onClick={() => onShare(post.id, 'send')} className="flex items-center gap-1.5 group" title="Send Pulse">
-          <svg viewBox="0 0 24 24" className="w-6 h-6 text-white group-hover:text-[#00F0FF] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="6" cy="12" r="1.5" fill="currentColor" stroke="none"/>
-            <path d="M9.5 8.5a6 6 0 0 1 0 7"/>
-            <path d="M13 6a10 10 0 0 1 0 12"/>
-            <path d="M16.5 3.5a14 14 0 0 1 0 17"/>
-          </svg>
         </button>
         <button onClick={() => onSave(post.id)} className="ml-auto">
           <Bookmark className={`w-6 h-6 transition-all ${post.isSaved ? 'text-[#B026FF] fill-[#B026FF]' : 'text-white'}`} />

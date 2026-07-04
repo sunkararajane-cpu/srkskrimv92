@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, Heart, MessageCircle, Share, Music, Send, Link as LinkIcon, Zap, Shield, SmilePlus, Bookmark } from 'lucide-react';
 import { SKRIM_REACTIONS } from '../lib/mock/mockData';
 import { BadgeRow } from './BadgeComponents';
+import { PulseSendSheet } from './PulseSheets';
 import { ReactionRow } from './ReactionRow';
 import { triggerReactionAnimation } from '../lib/animations/reactionAnimations';
 import { generateMockStatsForBadge } from '../lib/mock/mockBadges';
@@ -644,77 +645,12 @@ export function ImmersivePostViewer({ initialIndex, type, urls, user, users, onC
       </motion.div>
 
       {/* Share Bottom Sheet */}
-      <AnimatePresence>
-        {showShareMenu && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowShareMenu(false)}
-            className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end"
-          >
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-[#111] rounded-t-3xl border-t border-white/10 p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]"
-            >
-              <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6" />
-
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-white">Share as Spark</h3>
-                <button onClick={() => setShowShareMenu(false)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition"><X className="w-4 h-4 text-white" /></button>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <button onClick={() => { showToast('Added to your Spark'); setShowShareMenu(false); }} className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-4 transition group">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#B026FF] to-[#00F0FF] flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <Zap className="w-5 h-5 text-white fill-white/20" />
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <span className="text-white font-bold">Add to your Spark</span>
-                    <span className="text-[11px] text-gray-400 font-medium tracking-wide">Post to your story</span>
-                  </div>
-                </button>
-                <button onClick={() => { showToast('Sent in Connect'); setShowShareMenu(false); }} className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-4 transition group">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <MessageCircle className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <span className="text-white font-bold">Send in Connect</span>
-                    <span className="text-[11px] text-gray-400 font-medium tracking-wide">Direct Message</span>
-                  </div>
-                </button>
-                <button onClick={() => { showToast('Sent via Veil'); setShowShareMenu(false); }} className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-4 transition group">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF3366] to-[#FF9933] flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <Shield className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <span className="text-white font-bold">Share via Veil</span>
-                    <span className="text-[11px] text-gray-400 font-medium tracking-wide">Secure Private Share</span>
-                  </div>
-                </button>
-                <div className="flex gap-3">
-                    <button onClick={() => { showToast('Link copied'); setShowShareMenu(false); }} className="flex-1 flex flex-col items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-4 transition">
-                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                            <LinkIcon className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="text-white text-xs font-semibold">Copy Link</span>
-                    </button>
-                    <button onClick={() => { showToast('Opening apps...'); setShowShareMenu(false); }} className="flex-1 flex flex-col items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-4 transition">
-                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                            <Share className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="text-white text-xs font-semibold">More options</span>
-                    </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <PulseSendSheet 
+        isOpen={showShareMenu} 
+        onClose={() => setShowShareMenu(false)} 
+        post={{ id: `immers_${currentIndex}`, image: urls[currentIndex], user: user?.username || 'user', handle: user?.handle || 'user', avatar: user?.avatar }} 
+        onShareComplete={() => setShowShareMenu(false)} 
+      />
 
       {/* Comments Bottom Sheet */}
       <AnimatePresence>

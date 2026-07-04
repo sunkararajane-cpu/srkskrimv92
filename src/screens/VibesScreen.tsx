@@ -6,6 +6,7 @@ import {
   MoreHorizontal, Plus, Images, Video, RefreshCw, Send, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { assembleVibesFeed, getDefaultMood, MOODS, MOCK_USERS, type VibePost } from '../lib/mock/skrimAlgorithm';
+import { PulseSendSheet } from '../components/PulseSheets';
 import { incrementStat } from '../lib/mock/achievementEngine';
 import { useCurrentUser } from '../hooks/useCurrentUser';
 import { MusicPicker } from '../components/MusicPicker';

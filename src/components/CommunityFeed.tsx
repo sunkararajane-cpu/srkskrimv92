@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { PulseSendSheet } from './PulseSheets';
 import {
   Zap,
   MessageSquare,
@@ -148,35 +149,9 @@ export function CommunityFeed({
   const [isComposing, setIsComposing] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [shareToast, setShareToast] = useState<string | null>(null);
-
-  const handleSharePost = async (post: any) => {
-    const postLabel =
-      post.type === "poll"
-        ? post.question
-        : post.content?.slice(0, 80) || `a post in ${world.name}`;
-    const shareUrl = `https://skrimchat.app/world/${world.id}/post/${post.id}`;
-    const shareData = {
-      title: `${world.name} on SkrimChat`,
-      text: postLabel,
-      url: shareUrl,
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-        return;
-      }
-    } catch {
-      // user cancelled or share failed — fall through to clipboard copy
-    }
-
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setShareToast("Link copied to clipboard");
-    } catch {
-      setShareToast("Couldn't copy link");
-    }
-    setTimeout(() => setShareToast(null), 2500);
+  const [activeSharePost, setActiveSharePost] = useState<any>(null);
+  const handleSharePost = (post: any) => {
+    setActiveSharePost(post);
   };
 
   const filteredPosts = posts.filter((p) => {
@@ -403,11 +378,18 @@ export function CommunityFeed({
           </motion.div>
         )}
       </AnimatePresence>
+      <PulseSendSheet
+        isOpen={!!activeSharePost}
+        onClose={() => setActiveSharePost(null)}
+        post={activeSharePost}
+        onShareComplete={() => setActiveSharePost(null)}
+      />
     </div>
   );
 }
 
 function PostCard({
+
   post,
   colors,
   joined,
@@ -1047,6 +1029,7 @@ function EventCard({ post, colors }: { post: any; colors: string[] }) {
           </button>
         </div>
       </div>
+      
     </div>
   );
 }

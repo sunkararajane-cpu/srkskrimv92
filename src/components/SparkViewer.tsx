@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import { PulseSendSheet } from './PulseSheets';
 import {
   ArrowLeft,
   MoreVertical,
@@ -637,7 +638,7 @@ export function SparkViewer({
     if (!replyText.trim()) return;
     // Persist reply as a real Connect DM
     try {
-      const username = (group.user.username || group.user.handle || '').replace('@', '');
+      const username = (group?.user?.username || group?.user?.handle || '').replace('@', '');
       const storedChatsStr = localStorage.getItem('skrimchat_custom_chats');
       const customChats = storedChatsStr ? JSON.parse(storedChatsStr) : {};
       if (!customChats[username]) customChats[username] = [];
@@ -652,7 +653,7 @@ export function SparkViewer({
       });
       localStorage.setItem('skrimchat_custom_chats', JSON.stringify(customChats)); window.dispatchEvent(new Event('skrimchat_custom_chats_updated'));
     } catch (e) {}
-    showToast(`Reply sent to @${group.user.username || group.user.handle?.replace("@", "")}! ⚡`);
+    showToast(`Reply sent to @${group?.user?.username || group?.user?.handle?.replace("@", "")}! ⚡`);
     setActiveSheet(null);
     setReplyText("");
   };
@@ -663,7 +664,7 @@ export function SparkViewer({
       const challengeData = {
         sparkId: spark.id,
         challengeText: spark.challengeText || '',
-        challengerHandle: group.user.handle || group.user.username || '',
+        challengerHandle: group?.user?.handle || group?.user?.username || '',
         acceptedAt: Date.now(),
       };
       localStorage.setItem('skrimchat_pending_challenge', JSON.stringify(challengeData));
@@ -682,7 +683,7 @@ export function SparkViewer({
   const handleQnaAnswerSend = () => {
     if (!qnaAnswerText.trim() || !spark.qnaSticker) return;
     try {
-      const username = (group.user.username || group.user.handle || '').replace('@', '');
+      const username = (group?.user?.username || group?.user?.handle || '').replace('@', '');
       const storedChatsStr = localStorage.getItem('skrimchat_custom_chats');
       const customChats = storedChatsStr ? JSON.parse(storedChatsStr) : {};
       if (!customChats[username]) customChats[username] = [];
@@ -701,7 +702,7 @@ export function SparkViewer({
     markQnaAnswered(spark.id);
     setQnaJustAnswered(true);
     setQnaAnswerText("");
-    showToast(`Answer sent to @${group.user.username || group.user.handle?.replace("@", "")}! ⚡`);
+    showToast(`Answer sent to @${group?.user?.username || group?.user?.handle?.replace("@", "")}! ⚡`);
     setActiveSheet(null);
   };
 
@@ -751,7 +752,7 @@ export function SparkViewer({
             id: `repost_${spark.id}`,
             user: currentUser,
             isRepost: true,
-            repostedFrom: group.user.handle || group.user.username,
+            repostedFrom: group?.user?.handle || group?.user?.username,
             createdAt: Date.now(),
             expiresAt: Date.now() + 24 * 60 * 60 * 1000,
             isOwn: true,
@@ -971,7 +972,7 @@ export function SparkViewer({
 
         <AnimatePresence mode="wait">
           <motion.div
-            key={group.userId}
+            key={group.userId || userIndex}
             initial={{ x: direction === 1 ? "100%" : "-100%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: direction === 1 ? "-100%" : "100%", opacity: 0 }}
@@ -1000,7 +1001,7 @@ export function SparkViewer({
                   <ArrowLeft className="w-6 h-6" />
                 </button>
                 <div className="flex flex-col items-center justify-center">
-                  <HighlightAvatar emoji={group.emoji || "✨"} theme={group.user?.avatar?.includes('gradient') || group.user?.avatar?.startsWith('#') ? group.user.avatar : "linear-gradient(135deg, #8B5CF6, #3B82F6)"} size={80} />
+                  <HighlightAvatar emoji={group.emoji || "✨"} theme={group.user?.avatar?.includes('gradient') || group.user?.avatar?.startsWith('#') ? group?.user?.avatar : "linear-gradient(135deg, #8B5CF6, #3B82F6)"} size={80} />
                   <h3 className="text-white font-bold text-xl mb-2 mt-6">
                     No sparks yet
                   </h3>
@@ -1055,7 +1056,7 @@ export function SparkViewer({
                 <div className="absolute inset-0 z-0 flex items-center justify-center bg-black">
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={spark.id}
+                      key={spark.id || sparkIndex}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -1162,7 +1163,7 @@ export function SparkViewer({
                   >
                     {group.sparks.map((s: any, i: number) => (
                       <div
-                        key={s.highlightId || s.id || i}
+                        key={`${s.highlightId || s.id || ''}_${i}`}
                         className="h-1 flex-1 bg-white/20 rounded-full overflow-hidden shrink-0"
                       >
                         <div
@@ -1220,12 +1221,12 @@ export function SparkViewer({
                         {isHighlightMode ? (
                           <>
                             <motion.span
-                              key={group.userId}
+                              key={group.userId || userIndex}
                               initial={{ opacity: 0, y: 5 }}
                               animate={{ opacity: 1, y: 0 }}
                               className="font-semibold text-[15px] leading-tight text-white mb-0.5"
                             >
-                              ✨ {highlightName || group.user.displayName || "Highlight"}
+                              ✨ {highlightName || group?.user?.displayName || "Highlight"}
                             </motion.span>
                             <span className="text-[11px] text-gray-400 font-medium leading-tight mt-0.5">
                               Saved today
@@ -1235,7 +1236,7 @@ export function SparkViewer({
                           <>
                             <div className="flex items-center gap-1.5 mb-0.5">
                               <motion.span
-                                key={group.userId}
+                                key={group.userId || userIndex}
                                 initial={{ opacity: 0, y: 5 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 className="font-semibold text-[15px] leading-tight text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]"
@@ -1259,20 +1260,20 @@ export function SparkViewer({
                           <>
                             <div className="flex items-center gap-1.5 mb-0.5">
                               <motion.span
-                                key={group.userId}
+                                key={group.userId || userIndex}
                                 initial={{ opacity: 0, y: 5 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 className="font-semibold text-[15px] leading-tight text-white mb-0.5"
                               >
-                                {group.user.displayName ||
-                                  group.user.user ||
-                                  group.user.username}
+                                {group?.user?.displayName ||
+                                  group?.user?.user ||
+                                  group?.user?.username}
                               </motion.span>
                             </div>
                             <span className="text-[12px] font-medium text-gray-300 leading-tight">
                               @
-                              {group.user.username ||
-                                group.user.handle?.replace("@", "")}
+                              {group?.user?.username ||
+                                group?.user?.handle?.replace("@", "")}
                             </span>
                             <span className="text-[11px] text-gray-400 font-medium leading-tight mt-0.5">
                               {getSparkTimeAgo(spark)}
@@ -1523,9 +1524,9 @@ export function SparkViewer({
                       )}
                       {spark.type === 'video' && spark.taggedUsers && spark.taggedUsers.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-1 pointer-events-auto">
-                          {spark.taggedUsers.map((u: string) => (
+                          {spark.taggedUsers.map((u: string, idx: number) => (
                             <button 
-                              key={u}
+                              key={`${u}_${idx}`}
                               onClick={(e) => { e.stopPropagation(); navigate(`/profile/${u.replace('@', '')}`); }}
                               className="px-2 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold shadow-sm"
                             >
@@ -1965,7 +1966,7 @@ export function SparkViewer({
 
         {/* Bottom Sheets Overlay */}
         <AnimatePresence>
-          {activeSheet && (
+          {activeSheet && activeSheet !== "share" && activeSheet !== "connect" && (
             <>
               {/* Backdrop */}
               <motion.div
@@ -1997,8 +1998,8 @@ export function SparkViewer({
                     <div className="flex justify-between items-center mb-5">
                       <h3 className="font-bold text-white text-lg">
                         Reply to{" "}
-                        {group.user.displayName ||
-                          `@${group.user.handle?.replace("@", "")}`}
+                        {group?.user?.displayName ||
+                          `@${group?.user?.handle?.replace("@", "")}`}
                       </h3>
                       <button
                         onClick={() => setActiveSheet(null)}
@@ -2122,7 +2123,7 @@ export function SparkViewer({
 
                     <div className="bg-white/5 rounded-xl border border-white/10 p-4 mb-5">
                       <p className="text-xs text-[#B026FF] font-bold mb-1">
-                        @{group.user.handle?.replace("@", "")} asks:
+                        @{group?.user?.handle?.replace("@", "")} asks:
                       </p>
                       <p className="text-white text-base font-semibold leading-tight">
                         {spark.qnaSticker.prompt}
@@ -2236,7 +2237,7 @@ export function SparkViewer({
                         </div>
                         <div className="flex-1 pt-1">
                           <p className="text-xs text-[#B026FF] font-bold mb-1">
-                            @{group.user.handle?.replace("@", "")} challenges
+                            @{group?.user?.handle?.replace("@", "")} challenges
                             you:
                           </p>
                           <p className="text-white text-base font-semibold leading-tight">
@@ -2314,840 +2315,18 @@ export function SparkViewer({
                   </div>
                 )}
 
-                {/* Share Sheet */}
-                {activeSheet === "share" && (
-                  <div className="px-5 pb-8 flex flex-col">
-                    <div className="flex justify-between items-center mb-5 sticky top-0 bg-[#121212]/95 backdrop-blur-sm py-2 -mx-5 px-5 z-10 border-b border-white/5">
-                      <h3 className="font-bold text-white text-lg flex items-center gap-2">
-                        <Share2 className="w-5 h-5 text-[#B026FF]" /> Share Spark ⚡
-                      </h3>
-                      <button onClick={() => setActiveSheet(null)} className="p-1.5 bg-white/10 rounded-full">
-                        <X className="w-5 h-5 text-white" />
-                      </button>
-                    </div>
-
-                    {/* Primary actions */}
-                    <div className="flex flex-col gap-2 mb-5">
-                      {/* Share to your Spark — real repost */}
-                      <button
-                        onClick={() => handleShareOption("your story")}
-                        className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-[#B026FF]/10 border border-[#B026FF]/30 hover:bg-[#B026FF]/20 transition-colors"
-                      >
-                        <div className="w-11 h-11 rounded-full bg-[#B026FF]/30 flex items-center justify-center shrink-0">
-                          <Sparkles className="w-5 h-5 text-[#B026FF]" />
-                        </div>
-                        <div className="text-left">
-                          <div className="text-white font-bold">Add to your Spark</div>
-                          <div className="text-[#B026FF]/70 text-xs mt-0.5">Reposts this to your story — live for 24h</div>
-                        </div>
-                      </button>
-
-                      {/* Send in Connect — to a specific user */}
-                      <button
-                        onClick={() => handleShareOption("Connect")}
-                        className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 transition-colors"
-                      >
-                        <div className="w-11 h-11 rounded-full bg-blue-500/30 flex items-center justify-center shrink-0">
-                          <MessageSquare className="w-5 h-5 text-blue-400" />
-                        </div>
-                        <div className="text-left">
-                          <div className="text-white font-bold">Send in Connect</div>
-                          <div className="text-blue-400/70 text-xs mt-0.5">Pick a contact — opens their chat directly</div>
-                        </div>
-                      </button>
-
-                      {/* Share in Arattai + copy link */}
-                      <button
-                        onClick={() => handleShareOption("Arattai")}
-                        className="w-full flex items-center gap-4 p-3.5 rounded-xl bg-green-500/10 border border-green-500/30 hover:bg-green-500/20 transition-colors"
-                      >
-                        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shrink-0 text-xl">
-                          💬
-                        </div>
-                        <div className="text-left flex-1">
-                          <div className="text-white font-bold">Share in Arattai</div>
-                          <div className="text-green-400/70 text-xs mt-0.5">Posts to Arattai feed + copies link</div>
-                        </div>
-                        <div className="flex items-center gap-1 bg-green-500/20 px-2 py-1 rounded-full">
-                          <Copy className="w-3 h-3 text-green-400" />
-                          <span className="text-[10px] text-green-400 font-bold">+ Copy</span>
-                        </div>
-                      </button>
-                    </div>
-
-                    {/* Copy link standalone */}
-                    <button
-                      onClick={handleCopyLink}
-                      className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors mb-5"
-                    >
-                      <Copy className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-300 text-sm font-medium flex-1 text-left truncate">
-                        skrim.chat/spark/{spark.id}
-                      </span>
-                      <span className="text-[#B026FF] text-xs font-bold">Copy</span>
-                    </button>
-
-                    <p className="text-xs text-gray-400 font-bold mb-3 uppercase tracking-wider px-1">
-                      Share to Social Media
-                    </p>
-
-                    {/* Social grid — 4 cols */}
-                    <div className="grid grid-cols-4 gap-3 px-1">
-                      {/* WhatsApp */}
-                      <button onClick={() => handleShareOption("WhatsApp")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-14 h-14 rounded-2xl bg-[#25D366] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                          <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.555 4.107 1.523 5.83L.057 23.75a.5.5 0 0 0 .62.62l5.896-1.467A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.95 9.95 0 0 1-5.092-1.395l-.363-.215-3.758.935.936-3.643-.237-.376A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">WhatsApp</span>
-                      </button>
-
-                      {/* Instagram */}
-                      <button onClick={() => handleShareOption("Instagram")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#f09433] via-[#e6683c] via-[#dc2743] via-[#cc2366] to-[#bc1888] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                          <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">Instagram</span>
-                      </button>
-
-                      {/* Snapchat */}
-                      <button onClick={() => handleShareOption("Snapchat")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-14 h-14 rounded-2xl bg-[#FFFC00] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                          <svg viewBox="0 0 24 24" className="w-7 h-7 fill-[#000]"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.031-.063-.052-.15-.055-.225-.015-.243.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.029-.24-.074-.346-.119-1.107-.435-1.257-.93-1.197-1.273.09-.479.674-.793 1.168-.793.146 0 .27.029.383.074.42.194.789.3 1.104.3.234 0 .384-.06.465-.105l-.046-.569c-.098-1.626-.225-3.651.307-4.837C7.392 1.077 10.739.807 11.727.807l.419-.015h.06z"/></svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">Snapchat</span>
-                      </button>
-
-                      {/* X / Twitter */}
-                      <button onClick={() => handleShareOption("Twitter")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-14 h-14 rounded-2xl bg-black border border-white/20 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                          <svg viewBox="0 0 24 24" className="w-6 h-6 fill-white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">X (Twitter)</span>
-                      </button>
-
-                      {/* Facebook */}
-                      <button onClick={() => handleShareOption("Facebook")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-14 h-14 rounded-2xl bg-[#1877F2] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                          <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">Facebook</span>
-                      </button>
-
-                      {/* Reddit */}
-                      <button onClick={() => handleShareOption("Reddit")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-14 h-14 rounded-2xl bg-[#FF4500] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                          <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">Reddit</span>
-                      </button>
-
-                      {/* Discord */}
-                      <button onClick={() => handleShareOption("Discord")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-14 h-14 rounded-2xl bg-[#5865F2] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                          <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">Discord</span>
-                      </button>
-
-                      {/* Telegram */}
-                      <button onClick={() => handleShareOption("Telegram")} className="flex flex-col items-center gap-1.5 group">
-                        <div className="w-14 h-14 rounded-2xl bg-[#0088cc] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                          <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.96 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">Telegram</span>
-                      </button>
-
-                      {/* See all */}
-                      <button
-                        onClick={() => {
-                          if (navigator.share) {
-                            navigator.share({
-                              title: spark.caption || "Check out this Spark!",
-                              url: `https://skrim.chat/spark/${spark.id}`,
-                            }).catch(() => {});
-                          }
-                        }}
-                        className="flex flex-col items-center gap-1.5 group"
-                      >
-                        <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg group-hover:scale-105 group-hover:bg-white/20 transition-all">
-                          <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-white fill-none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                            <polyline points="16 6 12 2 8 6"/>
-                            <line x1="12" y1="2" x2="12" y2="15"/>
-                          </svg>
-                        </div>
-                        <span className="text-[11px] text-gray-300 font-medium">See all</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Connect Share Sheet */}
-                {activeSheet === "connect" && (
-                  <div className="px-4 pb-6 flex flex-col max-h-[70vh]">
-                    <div className="flex justify-between items-center mb-4 shrink-0">
-                      <h3 className="font-bold text-white text-lg">
-                        Send to...
-                      </h3>
-                      <button
-                        onClick={() => setActiveSheet(null)}
-                        className="p-1.5 bg-white/10 rounded-full"
-                      >
-                        <X className="w-5 h-5 text-white" />
-                      </button>
-                    </div>
-
-                    <div className="relative mb-4 shrink-0">
-                      <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        placeholder="Search contacts..."
-                        value={contactSearch}
-                        onChange={(e) => setContactSearch(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white text-sm outline-none focus:border-[#B026FF]/50 transition-colors"
-                      />
-                    </div>
-
-                    <p className="text-xs text-gray-400 font-bold mb-2 uppercase tracking-wider shrink-0 px-1">
-                      Recent Chats
-                    </p>
-
-                    <div className="overflow-y-auto no-scrollbar flex-1 mb-4 flex flex-col gap-1 min-h-0">
-                      {(() => {
-                        const storedChatsStr = localStorage.getItem('skrimchat_custom_chats');
-                        const customChats = storedChatsStr ? JSON.parse(storedChatsStr) : {};
-                        const existingChatUsernames = new Set(Object.keys(customChats));
-
-                        const filtered = connectContacts.filter(u =>
-                          u.id !== currentUser?.id &&
-                          (u.displayName?.toLowerCase().includes(contactSearch.toLowerCase()) ||
-                           u.username?.toLowerCase().includes(contactSearch.toLowerCase()))
-                        );
-
-                        // Split into "in Connect" vs "others"
-                        const inConnect = filtered.filter(u => {
-                          const uname = u.username?.replace('@', '');
-                          return existingChatUsernames.has(uname);
-                        });
-                        const others = filtered.filter(u => {
-                          const uname = u.username?.replace('@', '');
-                          return !existingChatUsernames.has(uname);
-                        });
-
-                        const renderUser = (u: any) => {
-                          const isSelected = selectedContacts.includes(u.id);
-                          const inChat = existingChatUsernames.has(u.username?.replace('@', ''));
-                          return (
-                            <button
-                              key={u.id}
-                              onClick={() => {
-                                setSelectedContacts((prev) =>
-                                  prev.includes(u.id)
-                                    ? prev.filter((id) => id !== u.id)
-                                    : [...prev, u.id]
-                                );
-                              }}
-                              className={`flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors text-left ${isSelected ? "bg-white/10" : ""}`}
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-white/10">
-                                  <img src={u.avatar} alt={u.displayName} className="w-full h-full object-cover" />
-                                </div>
-                                <div>
-                                  <div className="text-white font-semibold flex items-center gap-1.5">
-                                    {u.displayName}
-                                    {u.isVerified && (
-                                      <div className="w-3.5 h-3.5 bg-blue-500 rounded-full flex items-center justify-center">
-                                        <Check className="w-2.5 h-2.5 text-white" />
-                                      </div>
-                                    )}
-                                    {inChat && (
-                                      <span className="text-[9px] bg-[#B026FF]/20 text-[#B026FF] px-1.5 py-0.5 rounded-full font-bold">In Connect</span>
-                                    )}
-                                  </div>
-                                  <div className="text-sm text-gray-400">@{u.username?.replace('@', '')}</div>
-                                </div>
-                              </div>
-                              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? "bg-[#B026FF] border-[#B026FF]" : "border-white/20"}`}>
-                                {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
-                              </div>
-                            </button>
-                          );
-                        };
-
-                        return (
-                          <>
-                            {inConnect.length > 0 && (
-                              <>
-                                {inConnect.map(renderUser)}
-                                {others.length > 0 && (
-                                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wider px-1 pt-2 pb-1">Other People</p>
-                                )}
-                              </>
-                            )}
-                            {others.map(renderUser)}
-                          </>
-                        );
-                      })()}
-                    </div>
-
-                    <button
-                      onClick={handleConnectSend}
-                      disabled={selectedContacts.length === 0}
-                      className={`w-full py-3.5 rounded-full font-bold shadow-lg transition-all shrink-0 ${selectedContacts.length > 0 ? "bg-gradient-to-r from-[#B026FF] to-[#00F0FF] text-white hover:opacity-90" : "bg-white/10 text-white/40 cursor-not-allowed"}`}
-                    >
-                      {selectedContacts.length > 0
-                        ? `Send to ${selectedContacts.length} ⚡`
-                        : "Send ⚡"}
-                    </button>
-                  </div>
-                )}
-
-                {/* Highlight Sheet */}
-                {activeSheet === "highlight" && (
-                  <div className="px-5 pb-6">
-                    <div className="flex flex-col mb-6">
-                      <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-4" />
-                      <h3 className="font-bold text-white text-xl flex items-center justify-center gap-2 mb-2">
-                        ✨ Add to Highlight
-                      </h3>
-                      <div className="h-px w-full bg-white/10 mt-3 mb-5" />
-                    </div>
-
-                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 items-start px-2">
-                      {highlights.map((hl) => {
-                        const cover = hl.cover;
-                        const isImage = cover?.startsWith('http') || cover?.startsWith('data:');
-                        const bgs: Record<string, string> = {
-                          'purple': 'linear-gradient(to bottom right, #B026FF, #00F0FF)',
-                          'rose': 'linear-gradient(to bottom, #FF416C, #FF4B2B)',
-                          'dark': '#121212',
-                          'orange-red': 'linear-gradient(to bottom right, #FF8A00, #FF0000)',
-                          'cyan-blue': 'linear-gradient(to bottom right, #00FFFF, #0000FF)',
-                          'green-teal': 'linear-gradient(to bottom right, #00FF00, #008080)',
-                          'pink-purple': 'linear-gradient(to bottom right, #FF00FF, #800080)',
-                          'gold-orange': 'linear-gradient(to bottom right, #FFD700, #FFA500)',
-                        };
-                        const bgStyle = isImage ? {} : { background: cover?.includes('gradient') || cover?.startsWith('#') ? cover : (bgs[cover] || bgs['purple']) };
-                        
-                        return (
-                          <button
-                            key={hl.id}
-                            onClick={() => handleAddToHighlight(hl.id)}
-                            className="flex flex-col items-center gap-2 shrink-0 group focus:outline-none"
-                          >
-                            <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[#B026FF] to-[#00F0FF] shadow-[0_0_8px_rgba(176,38,255,0.3)] transition-transform group-active:scale-95">
-                              <div className="w-full h-full rounded-full overflow-hidden border-2 border-[#121212]" style={bgStyle}>
-                                {isImage && <img src={cover} alt={hl.title} className="w-full h-full object-cover" />}
-                              </div>
-                            </div>
-                            <span className="text-xs font-semibold text-gray-300 w-16 truncate text-center group-active:text-white transition-colors">{hl.title}</span>
-                          </button>
-                        );
-                      })}
-                      
-                      <button
-                        onClick={() => setActiveSheet("create-highlight")}
-                        className="flex flex-col items-center gap-2 shrink-0 group focus:outline-none"
-                      >
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white/5 border-2 border-dashed border-[#B026FF]/60 hover:bg-white/10 transition-colors group-active:scale-95">
-                          <Plus className="w-6 h-6 text-[#B026FF]" />
-                        </div>
-                        <span className="text-xs font-semibold text-gray-300 group-active:text-white transition-colors">New</span>
-                      </button>
-                    </div>
-
-                    <div className="h-px w-full bg-white/10 mt-2 mb-5" />
-
-                    <button
-                      onClick={() => setActiveSheet(null)}
-                      className="w-full py-3.5 rounded-full font-semibold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition-colors active:scale-95 text-center"
-                    >
-                      Skip
-                    </button>
-                  </div>
-                )}
-
-                {/* Create Highlight Sheet */}
-                {activeSheet === "create-highlight" && (
-                  <div className="px-5 pb-6">
-                    <div className="flex flex-col mb-4">
-                      <h3 className="font-bold text-white text-xl text-center mb-3">
-                        Create New Highlight
-                      </h3>
-                      <div className="h-px w-full bg-white/10 mb-5" />
-                    </div>
-
-                    <div className="mb-6">
-                      <input
-                        type="text"
-                        placeholder="Enter highlight name..."
-                        value={newHighlightName}
-                        onChange={(e) => setNewHighlightName(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white outline-none focus:border-[#B026FF]/50 transition-colors font-medium placeholder:text-white/40 mb-4"
-                        autoFocus
-                      />
-                      
-                      <div className="text-white/70 text-sm font-medium mb-3">
-                        Pick an emoji for your highlight
-                      </div>
-                      <div className="grid grid-cols-6 gap-2">
-                        {["🔥", "⚡", "💜", "🌙", "🎮", "🏆", "✨", "💫", "🎯", "🌊", "🎵", "💎", "❤️", "🚀", "👑", "🌟", "🎪", "🦋"].map(emoji => (
-                          <button
-                            key={emoji}
-                            onClick={() => setNewHighlightEmoji(emoji)}
-                            className={`h-12 w-12 flex items-center justify-center text-2xl rounded-full transition-all ${
-                              newHighlightEmoji === emoji ? "border-2 border-[#B026FF] bg-[#B026FF]/20" : "bg-white/5 border border-transparent hover:bg-white/10"
-                            }`}
-                          >
-                            {emoji}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-3">
-                      <button
-                        onClick={() => setActiveSheet("highlight")}
-                        className="flex-1 py-3.5 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-white/70 transition-colors active:scale-95 text-center"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={handleCreateHighlight}
-                        disabled={!newHighlightName.trim()}
-                        className={`flex-1 py-3.5 rounded-xl font-bold shadow-lg transition-all active:scale-95 ${
-                          newHighlightName.trim()
-                            ? "bg-[#B026FF] text-white hover:opacity-90"
-                            : "bg-white/10 text-white/40 cursor-not-allowed"
-                        }`}
-                      >
-                        Create
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Insights Sheet */}
-                {activeSheet === "insights" && spark && (
-                  <div className="px-6 pb-6 pt-2">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="bg-[#B026FF]/20 p-2.5 rounded-full">
-                        <BarChart2 className="w-5 h-5 text-[#B026FF]" />
-                      </div>
-                      <h2 className="text-white text-xl font-bold tracking-tight">
-                        SPARK INSIGHTS
-                      </h2>
-                    </div>
-
-                    <div className="space-y-3">
-                      <SparkSeenBy
-                        viewers={getSparkViewers(spark.id, spark.views || 0)}
-                        totalViews={spark.views || 0}
-                        onViewProfile={(username) => {
-                          setActiveSheet(null);
-                          navigate(`/profile/${username}`);
-                        }}
-                      />
-
-                      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3 text-white/80">
-                          <span className="text-xl">👁️</span>
-                          <span className="font-semibold text-[15px]">
-                            Views
-                          </span>
-                        </div>
-                        <span className="text-white font-bold text-lg">
-                          {(spark.views || 0).toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3 text-white/80">
-                          <span className="text-xl">🔄</span>
-                          <span className="font-semibold text-[15px]">
-                            Shares
-                          </span>
-                        </div>
-                        <span className="text-white font-bold text-lg">
-                          {(spark.reactions?.share || 0).toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3 text-white/80">
-                          <span className="text-xl">⚡</span>
-                          <span className="font-semibold text-[15px]">
-                            Total Energy
-                          </span>
-                        </div>
-                        <span className="text-[#00F0FF] font-bold text-lg">
-                          {Object.values(spark.reactions || {})
-                            .reduce((a: any, b: any) => a + b, 0)
-                            .toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3 text-white/80">
-                          <span className="text-xl">👤</span>
-                          <span className="font-semibold text-[15px]">
-                            Profile Visits
-                          </span>
-                        </div>
-                        <span className="text-white font-bold text-lg">
-                          {Math.floor((spark.views || 0) * 0.15).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    {!group.isExpired && (
-                      <div className="mt-8 pt-4 border-t border-white/10 flex justify-between items-center px-2">
-                        <span className="text-white/40 text-sm font-medium">
-                          Expires in
-                        </span>
-                        {(() => {
-                          const hoursLeft = Math.floor(Math.max(0, timeRemaining) / (1000 * 60 * 60));
-                          const minutesLeft = Math.floor((Math.max(0, timeRemaining) % (1000 * 60 * 60)) / (1000 * 60));
-                          
-                          let colorClass = "text-[#B026FF]";
-                          let animationClass = "";
-                          
-                          if (hoursLeft < 1 && minutesLeft < 10) {
-                            colorClass = "text-[#EF4444]";
-                            animationClass = "animate-pulse";
-                          } else if (hoursLeft < 1) {
-                            colorClass = "text-[#F97316]";
-                          }
-
-                          return (
-                            <span className={`font-bold text-sm ${colorClass} ${animationClass}`.trim()}>
-                              {hoursLeft}h {minutesLeft}m
-                            </span>
-                          );
-                        })()}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Highlight Options Sheet */}
-                {activeSheet === "highlight-options" && (
-                  <div className="px-0 pb-0">
-                    <div className="flex flex-col">
-                      <button
-                        onClick={() => {
-                          const url = `${window.location.origin}/spark/${spark.id}`;
-                          navigator.clipboard.writeText(url);
-                          showToast("🔗 Link copied!");
-                          setActiveSheet(null);
-                        }}
-                        className="w-full flex items-center gap-3 px-6 py-4 text-white hover:bg-white/10 transition-colors border-b border-white/5 active:bg-white/20"
-                      >
-                        <Copy className="w-5 h-5 text-gray-300" />
-                        <span className="font-semibold text-base">
-                          Copy Link
-                        </span>
-                      </button>
-
-                      <button
-                        onClick={() => setActiveSheet("remove-highlight-confirm")}
-                        className="w-full flex items-center gap-3 px-6 py-4 text-red-500 hover:bg-red-500/10 transition-colors active:bg-red-500/20"
-                      >
-                        <Trash2 className="w-5 h-5 text-red-500" />
-                        <span className="font-semibold text-base flex-1 text-left">
-                          Remove from Highlight
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Remove from Highlight Confirm Sheet */}
-                {activeSheet === "remove-highlight-confirm" && (
-                  <div className="px-5 pb-6 text-center">
-                    <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
-                      <Trash2 className="w-8 h-8" />
-                    </div>
-                    <h3 className="font-bold text-white text-xl mb-2">
-                       Remove from Highlight?
-                    </h3>
-                    <p className="text-white/60 text-sm mb-6 max-w-[260px] mx-auto">
-                       This spark will be removed from this highlight.
-                    </p>
-                    <div className="flex flex-col gap-3">
-                      <button
-                        onClick={() => {
-                          let hlList = JSON.parse(localStorage.getItem("skrimchat_highlights") || "[]");
-                          const activeHId = group.id; // From IdentityScreen originalId passed via group.id
-                          const updatedHighlights = hlList.map((h: any) => {
-                            if (h.id === activeHId || h.id === spark.highlightId) {
-                              return {
-                                ...h,
-                                sparks: h.sparks ? h.sparks.filter((s: any) => s.id !== spark.id) : []
-                              };
-                            }
-                            return h;
-                          });
-                          
-                          const finalHighlights = updatedHighlights.filter((h: any) => h.sparks && h.sparks.length > 0);
-                          localStorage.setItem("skrimchat_highlights", JSON.stringify(finalHighlights));
-                          
-                          // Dispatch event so IdentityScreen updates
-                          window.dispatchEvent(new Event("highlightSaved"));
-                          showToast("🗑️ Removed from Highlight");
-                          
-                          // Let the parent IdentityScreen handle close
-                          if (onDelete) {
-                              onDelete(spark.id);
-                          }
-                          setActiveSheet(null);
-                          if (group.sparks.length <= 1) {
-                              onClose();
-                          }
-                        }}
-                        className="w-full py-4 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 transition-colors pointer-events-auto shadow-lg shadow-red-500/20"
-                      >
-                        Remove
-                      </button>
-                      <button
-                        onClick={() => setActiveSheet("highlight-options")}
-                        className="w-full py-4 rounded-xl font-bold text-white border border-white/20 hover:bg-white/5 transition-colors pointer-events-auto"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Options Sheet */}
-                {activeSheet === "options" && (
-                  <div className="px-0 pb-0">
-                    {isOwnSpark ? (
-                      <div className="flex flex-col">
-                        <button
-                          onClick={() => setActiveSheet("highlight")}
-                          className="w-full flex items-center gap-3 px-6 py-4 text-white hover:bg-white/10 transition-colors border-b border-white/5 active:bg-white/20"
-                        >
-                          <Bookmark className="w-5 h-5 text-gray-300" />
-                          <span className="font-semibold text-base">
-                            Save to Highlight
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => setActiveSheet("insights")}
-                          className="w-full flex items-center gap-3 px-6 py-4 text-white hover:bg-white/10 transition-colors border-b border-white/5 active:bg-white/20"
-                        >
-                          <BarChart2 className="w-5 h-5 text-gray-300" />
-                          <span className="font-semibold text-base">
-                            View Insights
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(
-                              window.location.origin + "/spark/" + spark.id,
-                            );
-                            showToast("🔗 Link copied!");
-                            setActiveSheet(null);
-                          }}
-                          className="w-full flex items-center gap-3 px-6 py-4 text-white hover:bg-white/10 transition-colors border-b border-white/5 active:bg-white/20"
-                        >
-                          <Copy className="w-5 h-5 text-gray-300" />
-                          <span className="font-semibold text-base">
-                            Copy Link
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => setActiveSheet("delete-confirm")}
-                          className="w-full flex items-center gap-3 px-6 py-4 text-red-500 hover:bg-red-500/10 transition-colors active:bg-red-500/20"
-                        >
-                          <Trash2 className="w-5 h-5 text-red-500" />
-                          <span className="font-semibold text-base">
-                            Delete Spark
-                          </span>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col">
-                        <button
-                          onClick={() => setActiveSheet("report")}
-                          className="w-full flex items-center gap-3 px-6 py-4 text-yellow-500 hover:bg-yellow-500/10 transition-colors border-b border-white/5 active:bg-yellow-500/20"
-                        >
-                          <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                          <span className="font-semibold text-base">
-                            Report Spark
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => setActiveSheet("block-confirm")}
-                          className="w-full flex items-center gap-3 px-6 py-4 text-red-500 hover:bg-red-500/10 transition-colors active:bg-red-500/20"
-                        >
-                          <Ban className="w-5 h-5 text-red-500" />
-                          <span className="font-semibold text-base">
-                            Block @
-                            {group.user.username ||
-                              group.user.handle?.replace("@", "")}
-                          </span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Report Sheet */}
-                {activeSheet === "report" && (
-                  <div className="px-5 pb-6">
-                    <div className="flex justify-between items-center mb-5">
-                      <h3 className="font-bold text-white text-lg">
-                        Report Spark
-                      </h3>
-                      <button
-                        onClick={() => setActiveSheet(null)}
-                        className="p-1.5 bg-white/10 rounded-full"
-                      >
-                        <X className="w-5 h-5 text-white" />
-                      </button>
-                    </div>
-                    <div className="flex flex-col gap-2 mb-6">
-                      {[
-                        "Inappropriate content",
-                        "Spam or fake",
-                        "Harassment or bullying",
-                        "Misinformation",
-                        "Other",
-                      ].map((reason) => (
-                        <button
-                          key={reason}
-                          className="w-full flex items-center gap-3 px-4 py-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10 text-left text-white text-sm font-medium"
-                        >
-                          <div className="w-4 h-4 rounded-full border border-white/30" />
-                          {reason}
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      onClick={() => {
-                        showToast(
-                          "⚠️ Spark reported. We'll review it shortly.",
-                        );
-                        setActiveSheet(null);
-                      }}
-                      className="w-full py-3.5 rounded-full font-bold bg-white text-black hover:bg-gray-200 transition-colors"
-                    >
-                      Submit Report
-                    </button>
-                  </div>
-                )}
-
-                {/* Block Confirm Sheet */}
-                {activeSheet === "block-confirm" && (
-                  <div className="px-5 pb-6 text-center">
-                    <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
-                      <Ban className="w-8 h-8" />
-                    </div>
-                    <h3 className="font-bold text-white text-xl mb-2">
-                      Block @
-                      {group.user.username ||
-                        group.user.handle?.replace("@", "")}
-                      ?
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-8 px-4">
-                      They won't be able to see your profile or contact you.
-                    </p>
-                    <div className="flex flex-col gap-3">
-                      <button
-                        onClick={() => {
-                          try {
-                            const blockedStr = localStorage.getItem(
-                              "skrimchat_blocked_users",
-                            );
-                            let blocked = blockedStr
-                              ? JSON.parse(blockedStr)
-                              : [];
-                            if (!Array.isArray(blocked)) blocked = [];
-                            blocked.push(
-                              group.user.username ||
-                                group.user.handle?.replace("@", ""),
-                            );
-                            localStorage.setItem(
-                              "skrimchat_blocked_users",
-                              JSON.stringify(blocked),
-                            );
-                          } catch (e) {}
-                          showToast(
-                            `🚷 @${group.user.username || group.user.handle?.replace("@", "")} has been blocked.`,
-                          );
-                          setActiveSheet(null);
-                          onClose();
-                        }}
-                        className="w-full py-3.5 rounded-full font-bold bg-red-500 text-white hover:bg-red-600 transition-colors"
-                      >
-                        Block
-                      </button>
-                      <button
-                        onClick={() => setActiveSheet("options")}
-                        className="w-full py-3.5 rounded-full font-bold bg-white/5 text-white hover:bg-white/10 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Delete Confirm Sheet */}
-                {activeSheet === "delete-confirm" && (
-                  <div className="px-5 pb-6 text-center">
-                    <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
-                      <Trash2 className="w-8 h-8" />
-                    </div>
-                    <h3 className="font-bold text-white text-xl mb-2">
-                      Delete this Spark?
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-8">
-                      This cannot be undone.
-                    </p>
-                    <div className="flex flex-col gap-3">
-                      <button
-                        onClick={() => {
-                          try {
-                            const str =
-                              localStorage.getItem("skrimchat_sparks");
-                            if (str) {
-                              const arr = JSON.parse(str);
-                              const newArr = arr.filter(
-                                (s: any) => s.id !== spark.id,
-                              );
-                              localStorage.setItem(
-                                "skrimchat_sparks",
-                                JSON.stringify(newArr),
-                              );
-                            }
-                          } catch (e) {}
-                          if (onDelete) {
-                            onDelete(spark.id);
-                          }
-                          showToast("🗑️ Spark deleted");
-                          setActiveSheet(null);
-                          onClose();
-                        }}
-                        className="w-full py-3.5 rounded-full font-bold bg-red-500 text-white hover:bg-red-600 transition-colors"
-                      >
-                        Delete
-                      </button>
-                      <button
-                        onClick={() => setActiveSheet("options")}
-                        className="w-full py-3.5 rounded-full font-bold bg-white/5 text-white hover:bg-white/10 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
+                  </motion.div>
             </>
           )}
         </AnimatePresence>
+        {activeSheet === "share" || activeSheet === "connect" ? (
+          <PulseSendSheet
+            isOpen={true}
+            onClose={() => setActiveSheet(null)}
+            post={spark}
+            onShareComplete={() => setActiveSheet(null)}
+          />
+        ) : null}
 
         {showEndScreen && (
           <motion.div
